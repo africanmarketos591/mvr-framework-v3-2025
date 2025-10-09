@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it."
+title: "Minimum Viable Relationships (MVR) Framework: Africa’s Prerequisite to MVP"
+authors:
+  - family-names: "Mukiibi"
+    given-names: "Farouk Mark"
+    orcid: "https://orcid.org/0009-0009-8191-2098"
+version: "3.0.0"
+date-released: "2025-10-09"
+doi: "10.5281/zenodo.17054819"
+url: "https://africanmarketos.com/the-mvr-framework-minimum-viable-relationships/"
+preferred-citation:
+  type: report
+  title: "Minimum Viable Relationships (MVR): Africa’s Prerequisite to MVP"
+  year: 2025
+  doi: "10.5281/zenodo.17054819"
+  authors:
+    - family-names: "Mukiibi"
+      given-names: "Farouk Mark"
+      orcid: "https://orcid.org/0009-0009-8191-2098"
