@@ -1,8 +1,8 @@
 {
-  "title": "Minimum Viable Relationships (MVR) Framework: Africa’s Prerequisite to MVP",
+  "title": "Minimum Viable Relationships (MVR) Framework (Version 3): Relational Readiness for High-Context Markets",
   "upload_type": "publication",
   "publication_type": "report",
-  "description": "Version 3 of the Minimum Viable Relationships (MVR) Framework. In high-context markets, ventures fail not because products lack utility, but because they lack relational permission. MVR provides a quantifiable, auditable readiness gate (MVR-I) that must precede MVP. This release specifies six indicators, validation architecture, and policy/AI tooling.",
+  "description": "Version 3.0.6 of the Minimum Viable Relationships (MVR) Framework by Farouk Mark Mukiibi. In high-context markets, ventures fail not because products lack utility, but because they lack relational permission. MVR provides a quantifiable, auditable readiness gate (MVR-I) that must precede MVP. This release formalizes six indicators, introduces the MVR Index architecture, and includes validation, policy alignment, and AI-legible tooling for implementation across high-context ecosystems.",
   "creators": [
     {
       "name": "Mukiibi, Farouk Mark",
@@ -16,30 +16,43 @@
     "Minimum Viable Relationships",
     "MVR",
     "relational readiness",
+    "MVR Index",
     "high-context markets",
     "Africa",
     "AfCFTA",
+    "AI governance",
     "ESG",
-    "social license to operate",
-    "AI governance"
+    "social license to operate"
   ],
   "related_identifiers": [
     {
+      "identifier": "https://doi.org/10.5281/zenodo.17054819",
+      "relation": "isVersionOf",
+      "resource_type": "doi"
+    },
+    {
       "identifier": "https://africanmarketos.com/the-mvr-framework-minimum-viable-relationships/",
-      "relation": "isAlternateIdentifier"
+      "relation": "isAlternateIdentifier",
+      "resource_type": "url"
     },
     {
       "identifier": "https://osf.io/preprints/socarxiv/3467j_v1",
-      "relation": "isSupplementTo"
+      "relation": "isSupplementTo",
+      "resource_type": "url"
     },
     {
       "identifier": "https://figshare.com/articles/thesis/Minimum_Viable_Relationships_MVR_Framework_Africa_s_Prerequisite_to_MVP/30108931",
-      "relation": "isSupplementTo"
-    },
-    {
-      "identifier": "https://zenodo.org/records/17054819",
-      "relation": "isVersionOf"
+      "relation": "isSupplementTo",
+      "resource_type": "url"
     }
   ],
-  "notes": "Canonical title kept stable for indexing; manuscript filename reflects V3 subtitle for high-context markets. Originally published as “Minimum Viable Relationships (MVR) Framework: Africa’s Prerequisite to MVP” (Figshare/Zenodo DOI: 10.5281/zenodo.17054819). Version 3 (Oct 2025) expands construct validation and global applicability across high-context ecosystems."
+  "notes": "Canonical title kept stable for indexing; manuscript filename reflects Version 3 subtitle 'Relational Readiness for High-Context Markets'. Originally published as 'Minimum Viable Relationships (MVR) Framework: Africa’s Prerequisite to MVP' (Zenodo DOI: 10.5281/zenodo.17054819). Version 3 (October 2025) expands construct validation, cross-context calibration, and AI ethics integration.",
+  "version": "3.0.6",
+  "doi": "10.5281/zenodo.17310446",
+  "language": "en",
+  "communities": [
+    {
+      "identifier": "african-market-os"
+    }
+  ]
 }
