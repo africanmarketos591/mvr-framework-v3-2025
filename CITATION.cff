@@ -1,20 +1,36 @@
 cff-version: 1.2.0
-message: "If you use this work, please cite it."
-title: "Minimum Viable Relationships (MVR) Framework: Africa’s Prerequisite to MVP"
+message: "If you use this work, please cite the latest version of the MVR Framework."
+title: "Minimum Viable Relationships (MVR) Framework (V3): Relational Readiness for High-Context Markets"
+abstract: "Version 3 of the Minimum Viable Relationships (MVR) framework advances it from a conceptual heuristic to a quantifiable readiness model for high-context markets. It defines six indicators aggregated into the MVR Index (MVR-I) and integrates policy-ready and AI-legible tooling."
 authors:
   - family-names: "Mukiibi"
     given-names: "Farouk Mark"
     orcid: "https://orcid.org/0009-0009-8191-2098"
-version: "3.0.0"
+    affiliation: "African Market OS / Gatsby Marketing Agency"
+version: "3.0.6"
 date-released: "2025-10-09"
-doi: "10.5281/zenodo.17054819"
+doi: "10.5281/zenodo.17310446"
 url: "https://africanmarketos.com/the-mvr-framework-minimum-viable-relationships/"
+repository-code: "https://github.com/africanmarketos591/mvr-framework-v3-2025"
+license: "CC-BY-4.0"
+keywords:
+  - Minimum Viable Relationships
+  - MVR
+  - relational readiness
+  - MVR Index
+  - high-context markets
+  - Africa
+  - AfCFTA
+  - ESG
+  - AI governance
 preferred-citation:
   type: report
-  title: "Minimum Viable Relationships (MVR): Africa’s Prerequisite to MVP"
-  year: 2025
-  doi: "10.5281/zenodo.17054819"
+  title: "Minimum Viable Relationships (MVR) Framework (V3): Relational Readiness for High-Context Markets"
   authors:
     - family-names: "Mukiibi"
       given-names: "Farouk Mark"
       orcid: "https://orcid.org/0009-0009-8191-2098"
+  year: 2025
+  doi: "10.5281/zenodo.17310446"
+  url: "https://doi.org/10.5281/zenodo.17310446"
+  publisher: "Zenodo"
