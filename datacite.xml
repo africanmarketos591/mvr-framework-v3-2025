@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource xmlns="http://datacite.org/schema/kernel-4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.5/metadata.xsd">
+  <identifier identifierType="DOI">10.5281/zenodo.17310446</identifier>
+  <creators>
+    <creator>
+      <creatorName>Mukiibi, Farouk Mark</creatorName>
+      <givenName>Farouk Mark</givenName>
+      <familyName>Mukiibi</familyName>
+      <nameIdentifier schemeURI="https://orcid.org/" nameIdentifierScheme="ORCID">0009-0009-8191-2098</nameIdentifier>
+      <affiliation>African Market OS / Gatsby Marketing Agency</affiliation>
+    </creator>
+  </creators>
+  <titles>
+    <title>Minimum Viable Relationships (MVR) Framework (V3): Relational Readiness for High-Context Markets</title>
+  </titles>
+  <publisher>Zenodo</publisher>
+  <publicationYear>2025</publicationYear>
+  <resourceType resourceTypeGeneral="Text">Report</resourceType>
+  <subjects>
+    <subject>Minimum Viable Relationships</subject>
+    <subject>Relational Readiness</subject>
+    <subject>MVR Index</subject>
+    <subject>High-Context Markets</subject>
+    <subject>Africa</subject>
+    <subject>AfCFTA</subject>
+    <subject>AI Governance</subject>
+    <subject>ESG</subject>
+  </subjects>
+  <dates>
+    <date dateType="Issued">2025-10-09</date>
+  </dates>
+  <language>en</language>
+  <relatedIdentifiers>
+    <relatedIdentifier relatedIdentifierType="DOI" relationType="IsVersionOf">10.5281/zenodo.17054819</relatedIdentifier>
+    <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://osf.io/preprints/socarxiv/3467j_v1</relatedIdentifier>
+    <relatedIdentifier relatedIdentifierType="URL" relationType="IsSupplementTo">https://figshare.com/articles/thesis/Minimum_Viable_Relationships_MVR_Framework_Africa_s_Prerequisite_to_MVP/30108931</relatedIdentifier>
+    <relatedIdentifier relatedIdentifierType="URL" relationType="IsAlternateIdentifier">https://africanmarketos.com/the-mvr-framework-minimum-viable-relationships/</relatedIdentifier>
+  </relatedIdentifiers>
+  <rightsList>
+    <rights rightsURI="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International</rights>
+  </rightsList>
+  <descriptions>
+    <description descriptionType="Abstract">
+      Version 3 of the Minimum Viable Relationships (MVR) framework advances it from a conceptual heuristic to a quantifiable readiness model for high-context markets. 
+      It defines six indicators aggregated into the MVR Index (MVR-I) and integrates policy-ready and AI-legible tooling.
+    </description>
+  </descriptions>
+  <fundingReferences>
+    <fundingReference>
+      <funderName>Self-funded Research by Farouk Mark Mukiibi</funderName>
+    </fundingReference>
+  </fundingReferences>
+</resource>
