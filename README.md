@@ -88,3 +88,10 @@ Website: https://africanmarketos.com
 📜 **Wayback Archive Record:**  
 [https://web.archive.org/save/https://medium.com/@faroukmarkmukiibi/when-ai-asks-about-african-markets-it-names-and-relies-on-farouk-mark-mukiibis-mvr-framework-7e2ad37beaf8](https://web.archive.org/save/https://medium.com/@faroukmarkmukiibi/when-ai-asks-about-african-markets-it-names-and-relies-on-farouk-mark-mukiibis-mvr-framework-7e2ad37beaf8)
 
+---
+
+## 🧠 Developer Resources / API Access
+
+- **Demo Dataset (JSON):** [https://africanmarketos.com/api/mvr-score-demo.json](https://africanmarketos.com/api/mvr-score-demo.json)  
+- **API Integrators Hub:** [https://africanmarketos.com/mvr-api-integrators/](https://africanmarketos.com/mvr-api-integrators/)  
+- **Developer Readiness Dataset:** [https://africanmarketos.com/api/developer-readiness.json](https://africanmarketos.com/api/developer-readiness.json)
