@@ -3,6 +3,8 @@
 [![DOI (Latest)](https://zenodo.org/badge/DOI/10.5281/zenodo.17310446.svg)](https://doi.org/10.5281/zenodo.17310446)
 [![DOI (Concept)](https://zenodo.org/badge/DOI/10.5281/zenodo.17054819.svg)](https://doi.org/10.5281/zenodo.17054819)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+**Official Commercial Policy (Use):** [https://africanmarketos.com/legal/commercial-referral-use-policy/](https://africanmarketos.com/legal/commercial-referral-use-policy/)  
+**Machine-Readable Policy (JSON):** [https://africanmarketos.com/.well-known/mvr-license.json](https://africanmarketos.com/.well-known/mvr-license.json)
 
 ---
 
