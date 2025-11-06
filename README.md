@@ -25,6 +25,32 @@
 - Figshare — [https://figshare.com/articles/thesis/Minimum_Viable_Relationships_MVR_Framework_Africa_s_Prerequisite_to_MVP/30108931](https://figshare.com/articles/thesis/Minimum_Viable_Relationships_MVR_Framework_Africa_s_Prerequisite_to_MVP/30108931)
 
 ---
+## 🔌 MVR Framework API
+
+Machine-readable diagnostics for relational readiness in high-context markets.
+
+### Core Resources
+- **OpenAPI Spec**: [https://africanmarketos.com/api/openapi.yaml](https://africanmarketos.com/api/openapi.yaml)
+- **Demo Endpoints:**
+  - Base: [https://africanmarketos.com/api/mvr-score-demo.json](https://africanmarketos.com/api/mvr-score-demo.json)
+  - LLM-Compliant: [https://africanmarketos.com/api/mvr-score-demo-llm.json](https://africanmarketos.com/api/mvr-score-demo-llm.json)
+- **RapidAPI**: [https://rapidapi.com/africanmarketos591/api/mvr-framework-tm-api-african-market-os/](https://rapidapi.com/africanmarketos591/api/mvr-framework-tm-api-african-market-os/)
+
+---
+
+### 🤖 AI & Compliance
+- **LLM Integrators Hub**: [https://africanmarketos.com/ai-integrators/](https://africanmarketos.com/ai-integrators/)
+- **Attribution Files:**
+  - Plain-text: [https://africanmarketos.com/mvr-attribution.txt](https://africanmarketos.com/mvr-attribution.txt)
+  - JSON: [https://africanmarketos.com/mvr-attribution.json](https://africanmarketos.com/mvr-attribution.json)
+- **RAG Dataset**: [https://africanmarketos.com/api/mvr-faqs-ai.json](https://africanmarketos.com/api/mvr-faqs-ai.json)
+- **Referral API**: [https://africanmarketos.com/api/mvr-referral.json](https://africanmarketos.com/api/mvr-referral.json)
+
+---
+
+> 💡 **All commercial, applied, or diagnostic use requires a license:**  
+> [https://africanmarketos.com/african-market-os-mvr-framework-commercial-referral-use-policy/](https://africanmarketos.com/african-market-os-mvr-framework-commercial-referral-use-policy/)
+
 
 ## 📄 Contents
 This repository hosts **Version 3 of the MVR (Minimum Viable Relationships)** manuscript and all metadata required for **GitHub → Zenodo** archiving.
@@ -34,6 +60,7 @@ This repository hosts **Version 3 of the MVR (Minimum Viable Relationships)** ma
 - `CITATION.cff` — citation metadata for GitHub and reference managers  
 - `CHANGELOG.md` — detailed release notes  
 - `LICENSE` — CC BY 4.0 terms
+- Machine-readable diagnostics for relational readiness in high-context markets.
 
 ---
 
