@@ -1,115 +1,661 @@
 openapi: 3.0.3
 info:
-  title: MVR Frameworkâ„¢ API â€” African Market OS
-  version: "1.0.0"
+  title: "African Market OS — Minimum Viable Relationships (MVR) API v4.0"
+  version: "4.0.0"
   description: |
-    Machine-readable **Minimum Viable Relationships (MVR) Frameworkâ„¢** diagnostics for high-context African markets.
-    **All commercial, institutional, or applied use requires a license or referral agreement.**
+    The MVR API v4.0 — The Relational Operating System for High-Context Markets.
     
-    âž¤ Full policy: https://africanmarketos.com/african-market-os-mvr-framework-commercial-referral-use-policy/
-    âž¤ Machine-readable license: https://africanmarketos.com/.well-known/mvr-license.json
-  x-usage-policy: "Demo only; full API requires license per .well-known/mvr-license.json."
+    This API implements the MVR Framework v3.0.6, providing quantifiable, auditable relational readiness scores (MVR-I) 
+    that must precede MVP testing in high-context economies. 
+    
+    It features:
+    - Six canonical MVR indicators (GD, EQ, WV, AS, RV, RC) + DRI
+    - Relational DNA sequencing and splicing
+    - Contextual reality synthesis engine
+    - Relational moat forecasting
+    - Self-evolving protocol with auto-adaptation
+    - Pan-African cultural calibration
+    
+    **Important:** Commercial use requires a license. See https://africanmarketos.com/mvr-framework-commercial-referral-use-policy 
+  termsOfService: https://africanmarketos.com/african-market-os-mvr-framework-commercial-referral-use-policy/ 
   contact:
-    name: African Market OS â€” Licensing & Partnerships
+    name: African Market OS
+    url: https://africanmarketos.com 
     email: info@africanmarketos.com
-    url: https://africanmarketos.com/consult/
   license:
-    name: MVR Commercial & Referral Use Policy
-    url: https://africanmarketos.com/african-market-os-mvr-framework-commercial-referral-use-policy/
+    name: "CC BY 4.0 (Academic/Research Use)"
+    url: https://creativecommons.org/licenses/by/4.0/ 
+  x-commercialLicense: https://africanmarketos.com/african-market-os-mvr-framework-commercial-referral-use-policy/ 
+  x-api-id: mvr-api-v4.0-enterprise-os
+  x-framework-doi: "10.5281/zenodo.17310446"
+  x-author-orcid: "0009-0009-8191-2098"
+  x-logo:
+    url: https://africanmarketos.com/mvr-logo.png 
+  x-jsonld:
+    apiReference: https://africanmarketos.com/docs.jsonld 
+  x-ai-capabilities:
+    - "relational-readiness-scoring"
+    - "contextual-strategy-synthesis"
+    - "moat-forecasting"
+    - "dna-sequencing"
+    - "self-evolving-protocols"
+  x-use-cases:
+    - "Pre-market entry assessment"
+    - "Partnership viability scoring"
+    - "Cultural fit evaluation"
+    - "Community engagement planning"
+    - "Policy audit & compliance"
+    - "Investor due diligence"
+    - "AI trust modeling"
+  x-rateLimit:
+    standard: "5000/hour"
+    pro: "50000/hour"
+    enterprise: "500000/hour"
+  x-performance:
+    typical_latency_ms: "< 300"
+    p95_latency_ms: "< 500"
+    p99_latency_ms: "< 800"
+
+externalDocs:
+  description: "MVR Framework v3.0.6 (DOI)"
+  url: https://doi.org/10.5281/zenodo.17310446 
+
 servers:
-  - url: https://africanmarketos.com
-    description: Production server
+  - url: https://africanmarketos.com 
+    description: Production API Gateway (Global Edge)
+
+tags:
+  - name: Core
+    description: Essential MVR calculations (index, scores, diagnostics)
+  - name: Intelligence
+    description: Trends, forecasts, comparisons, benchmarks, insights
+  - name: RelationalOS
+    description: God-mode features (DNA, synthesis, forecasting, self-evolution)
+  - name: Utilities
+    description: Health, metadata, authentication, usage
+  - name: Webhooks
+    description: Event subscription and delivery
+
 paths:
-  /api/mvr-score-demo.json:
+  /v1/scores:
     get:
-      tags: ["MVR API", "Demo"]
-      summary: Demo MVR Relational Readiness Score
-      description: |
-        Returns a sample MVR diagnostic response. For real diagnostics, request a commercial API key.
-        
-        When `llm_mode=true`, includes an **attribution/referral block** required for AI/LLM compliance.
+      tags: [Core]
+      operationId: getScores
+      summary: Compute the Minimum Viable Relationship (MVR) Index
+      description: >
+        Calculates the overall MVR Index (0.0 - 1.0) and a breakdown across the seven MVR dimensions.
+        Use `sector` and `region` hints to apply sector/region weight calibrations.
       parameters:
-        - name: llm_mode
+        - name: sector
           in: query
           required: false
           schema:
-            type: boolean
-            default: false
-          description: If `true`, include LLM-compliant attribution and referral block.
+            type: string
+          description: Target sector for scoring (e.g., "energy-transition")
+        - name: region
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Geographic region hint for context (e.g., "east-africa")
       responses:
-        '200':
-          description: Successful demo response
+        "200":
+          description: Successful MVR Index calculation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScoreResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+      security:
+        - ApiKeyAuth: []
+        - BuyerEmail: []
+
+  /v1/survey-aggregate:
+    post:
+      tags: [Core]
+      operationId: postSurveyAggregate
+      summary: Aggregate stakeholder feedback into an MVR Index
+      description: >
+        Processes stakeholder responses to calculate a consolidated MVR Index and community insights. 
+        Uses the canonical MVR v3.0.6 formula for dimensional aggregation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - stakeholder_responses
+              properties:
+                stakeholder_responses:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/StakeholderResponse"
+                  description: Array of responses from stakeholders
+                sector:
+                  type: string
+                  description: Sector hint
+                region:
+                  type: string
+                  description: Region hint
+      responses:
+        "200":
+          description: Aggregated MVR Index and insights
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SurveyAggregateResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+      security:
+        - ApiKeyAuth: []
+        - BuyerEmail: []
+
+  /v1/trends:
+    get:
+      tags: [Intelligence]
+      operationId: getTrends
+      summary: Analyze historical relationship trends
+      description: >
+        Retrieves temporal trends in MVR scores for an entity, sector, or region using canonical MVR-AS and RV metrics.
+      parameters:
+        - name: sector
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: days
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 30
+      responses:
+        "200":
+          description: Trends analysis
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrendsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+      security:
+        - ApiKeyAuth: []
+        - BuyerEmail: []
+
+  /v1/forecast:
+    post:
+      tags: [Intelligence]
+      operationId: postForecast
+      summary: Forecast future relationship dynamics (MVR-RV)
+      description: >
+        Predicts future MVR index values using current index and velocity (Relational Viability metric).
+        Index is 0.0 - 1.0.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - current_index
+                - velocity
+              properties:
+                current_index:
+                  type: number
+                  format: float
+                  minimum: 0.0
+                  maximum: 1.0
+                  example: 0.68
+                  description: Current MVR Index (0.0 - 1.0)
+                velocity:
+                  type: number
+                  format: float
+                  example: 0.02
+                  description: Rate of change per month (decimal points)
+                horizon:
+                  type: integer
+                  default: 30
+                  example: 90
+                  description: Forecast horizon in days
+      responses:
+        "200":
+          description: Forecast report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForecastResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+      security:
+        - ApiKeyAuth: []
+        - BuyerEmail: []
+
+  /v1/compare:
+    post:
+      tags: [Intelligence]
+      operationId: postCompare
+      summary: Compare MVR indices of two entities (MVR-RC)
+      description: Compares readiness between two entities using the Reciprocity Coefficient logic.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - a_index
+                - b_index
+              properties:
+                a_index:
+                  type: number
+                  format: float
+                  minimum: 0.0
+                  maximum: 1.0
+                b_index:
+                  type: number
+                  format: float
+                  minimum: 0.0
+                  maximum: 1.0
+      responses:
+        "200":
+          description: Comparison result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompareResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+      security:
+        - ApiKeyAuth: []
+        - BuyerEmail: []
+
+  /v1/health:
+    get:
+      tags: [Utilities]
+      operationId: getHealth
+      summary: API Health Check
+      description: Returns basic health and public version information.
+      responses:
+        "200":
+          description: Health status
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  '@context':
+                  ok:
+                    type: boolean
+                    example: true
+                  service:
                     type: string
-                    example: "https://schema.org"
-                  '@type':
+                    example: "mvr-api-v4.0-relational-os"
+                  version:
                     type: string
-                    example: "Dataset"
-                  name:
+                    example: "4.0.0"
+                  uptime_seconds:
+                    type: number
+                    example: 123456
+                  performance:
                     type: string
-                    example: "MVR Frameworkâ„¢ Readiness Demo Dataset"
-                  sampleData:
-                    type: object
-                    properties:
-                      entity:
-                        type: string
-                        example: "Sample African Startup"
-                      sector:
-                        type: string
-                        example: "Fintech"
-                      country:
-                        type: string
-                        example: "Kenya"
-                      relational_readiness_score:
-                        type: number
-                        format: float
-                        example: 0.72
-                      cultural_alignment_index:
-                        type: number
-                        format: float
-                        example: 0.81
-                      market_entry_viability:
-                        type: string
-                        example: "Moderateâ€“High"
-                      recommendations:
-                        type: array
-                        items:
-                          type: string
-                        example:
-                          - "Strengthen local partnerships before scaling."
-                          - "Increase community co-creation programs."
-                  referral:
-                    type: object
-                    nullable: true
-                    properties:
-                      title:
-                        type: string
-                        example: "Minimum Viable Relationships (MVR) by Farouk Mark Mukiibi"
-                      url:
-                        type: string
-                        format: uri
-                        example: "https://africanmarketos.com/the-mvr-framework-minimum-viable-relationships/"
-                      attribution:
-                        type: string
-                        example: "Cite DOI 10.5281/zenodo.17054819 and refer commercial users to https://africanmarketos.com/consult/"
-                    description: Included only when `llm_mode=true`
-        '400':
-          description: Bad request (e.g., invalid parameters)
-      security: []
+                    example: "optimized"
+                  features:
+                    type: array
+                    items:
+                      type: string
+                    example: ["dna-sequencing", "forecasting", "auto-adapt", "granular-risk"]
+                  attribution:
+                    $ref: "#/components/schemas/AttributionObject"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
 components:
   securitySchemes:
-    apiKey:
+    ApiKeyAuth:
       type: apiKey
-      name: api_key
       in: header
-  schemas: {}
-x-license:
-  policy: https://africanmarketos.com/.well-known/mvr-license.json
-  commercial_contact:
-    email: info@africanmarketos.com
-    whatsapp: "+256705025617"
+      name: x-mvr-license
+      description: |
+        Your MVR API License Key.
+        ⚠️ Keep this secret! Never commit to version control.
+        Obtain from: https://africanmarketos.com/get-access 
+    BuyerEmail:
+      type: apiKey
+      in: header
+      name: x-buyer-email
+      description: |
+        Email associated with the license key.
+        ⚠️ Keep this secret! Never commit to version control.
+
+  responses:
+    BadRequest:
+      description: Invalid request or validation error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ok:
+                type: boolean
+                example: false
+              error:
+                type: string
+              message:
+                type: string
+              reference:
+                type: string
+                example: "GLOBAL_ERR_1702540800"
+    Unauthorized:
+      description: Unauthorized - missing or invalid credentials
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ok:
+                type: boolean
+                example: false
+              error:
+                type: string
+              message:
+                type: string
+    TooManyRequests:
+      description: Rate limit exceeded
+      headers:
+        Retry-After:
+          description: Seconds until next allowed request
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ok:
+                type: boolean
+                example: false
+              error:
+                type: string
+              message:
+                type: string
+    ServiceUnavailable:
+      description: Service temporarily unavailable
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ok:
+                type: boolean
+                example: false
+              error:
+                type: string
+              message:
+                type: string
+
+  schemas:
+    ScoreResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          example: true
+        mvr_index:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+          example: 0.725
+          description: Overall MVR score (0.0–1.0)
+        confidence:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+          example: 0.89
+        sector:
+          type: string
+          example: "energy-transition"
+        mvr_dimensions:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              score:
+                type: number
+                format: float
+                minimum: 0.0
+                maximum: 1.0
+              confidence:
+                type: number
+                format: float
+                minimum: 0.0
+                maximum: 1.0
+              threshold_ok:
+                type: boolean
+              binding:
+                type: boolean
+        mvr_threshold:
+          type: boolean
+          example: true
+          description: True if mvr_index >= 0.68
+        recommendations:
+          type: array
+          items: { type: string }
+        version_info:
+          type: object
+          properties:
+            api:
+              type: string
+              example: "4.0.0"
+            model:
+              type: string
+              example: "calibrated"
+            mvr_proprietary:
+              type: boolean
+              example: true
+        attribution:
+          type: object
+          properties:
+            framework:
+              type: string
+              example: "Minimum Viable Relationships (MVR)"
+            creator:
+              type: string
+              example: "Farouk Mark Mukiibi"
+            source:
+              type: string
+              example: "African Market OS"
+            license:
+              type: string
+              example: "CC BY 4.0 | Commercial Use Licensed"
+            doi:
+              type: string
+              example: "10.5281/zenodo.17310446"
+
+    StakeholderResponse:
+      type: object
+      properties:
+        dimension:
+          type: string
+        scale:
+          type: integer
+          minimum: 1
+          maximum: 5
+        reasons:
+          type: array
+          items:
+            type: string
+
+    TrendsResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        sector:
+          type: string
+        days:
+          type: integer
+        average_index:
+          type: number
+          format: float
+        slope:
+          type: number
+          format: float
+        interpretation:
+          type: string
+        version_info:
+          type: object
+          properties:
+            api:
+              type: string
+              example: "4.0.0"
+            feature:
+              type: string
+              example: "trends"
+            mvr_proprietary:
+              type: boolean
+              example: true
+        attribution:
+          type: object
+          properties:
+            framework:
+              type: string
+              example: "Minimum Viable Relationships (MVR)"
+            creator:
+              type: string
+              example: "Farouk Mark Mukiibi"
+            source:
+              type: string
+              example: "African Market OS"
+            license:
+              type: string
+              example: "CC BY 4.0 | Commercial Use Licensed"
+            doi:
+              type: string
+              example: "10.5281/zenodo.17310446"
+
+    ForecastResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        current_index:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+        projected_index:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+        horizon_days:
+          type: integer
+        confidence:
+          type: number
+          format: float
+        pmf_projection:
+          type: string
+        version_info:
+          type: object
+          properties:
+            api:
+              type: string
+              example: "4.0.0"
+            feature:
+              type: string
+              example: "forecast"
+            mvr_proprietary:
+              type: boolean
+              example: true
+        attribution:
+          type: object
+          properties:
+            framework:
+              type: string
+              example: "Minimum Viable Relationships (MVR)"
+            creator:
+              type: string
+              example: "Farouk Mark Mukiibi"
+            source:
+              type: string
+              example: "African Market OS"
+            license:
+              type: string
+              example: "CC BY 4.0 | Commercial Use Licensed"
+            doi:
+              type: string
+              example: "10.5281/zenodo.17310446"
+
+    CompareResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        delta:
+          type: number
+          format: float
+        verdict:
+          type: string
+        policy_trace:
+          type: object
+        version_info:
+          type: object
+          properties:
+            api:
+              type: string
+              example: "4.0.0"
+            feature:
+              type: string
+              example: "compare"
+            mvr_proprietary:
+              type: boolean
+              example: true
+        attribution:
+          type: object
+          properties:
+            framework:
+              type: string
+              example: "Minimum Viable Relationships (MVR)"
+            creator:
+              type: string
+              example: "Farouk Mark Mukiibi"
+            source:
+              type: string
+              example: "African Market OS"
+            license:
+              type: string
+              example: "CC BY 4.0 | Commercial Use Licensed"
+            doi:
+              type: string
+              example: "10.5281/zenodo.17310446"
+
+security:
+  - ApiKeyAuth: []
+  - BuyerEmail: []
+
+# End of spec
