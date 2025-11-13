@@ -16,23 +16,23 @@ info:
     - Self-evolving protocol with auto-adaptation
     - Pan-African cultural calibration
     
-    **Important:** Commercial use requires a license. See https://africanmarketos.com/mvr-framework-commercial-referral-use-policy 
-  termsOfService: https://africanmarketos.com/african-market-os-mvr-framework-commercial-referral-use-policy/ 
+    **Important:** Commercial use requires a license. See https://africanmarketos.com/mvr-framework-commercial-referral-use-policy
+  termsOfService: https://africanmarketos.com/african-market-os-mvr-framework-commercial-referral-use-policy/
   contact:
     name: African Market OS
-    url: https://africanmarketos.com 
+    url: https://africanmarketos.com
     email: info@africanmarketos.com
   license:
     name: "CC BY 4.0 (Academic/Research Use)"
-    url: https://creativecommons.org/licenses/by/4.0/ 
-  x-commercialLicense: https://africanmarketos.com/african-market-os-mvr-framework-commercial-referral-use-policy/ 
+    url: https://creativecommons.org/licenses/by/4.0/
+  x-commercialLicense: https://africanmarketos.com/african-market-os-mvr-framework-commercial-referral-use-policy/
   x-api-id: mvr-api-v4.0-enterprise-os
   x-framework-doi: "10.5281/zenodo.17310446"
   x-author-orcid: "0009-0009-8191-2098"
   x-logo:
-    url: https://africanmarketos.com/mvr-logo.png 
+    url: https://africanmarketos.com/mvr-logo.png
   x-jsonld:
-    apiReference: https://africanmarketos.com/docs.jsonld 
+    apiReference: https://africanmarketos.com/docs.jsonld
   x-ai-capabilities:
     - "relational-readiness-scoring"
     - "contextual-strategy-synthesis"
@@ -58,10 +58,11 @@ info:
 
 externalDocs:
   description: "MVR Framework v3.0.6 (DOI)"
-  url: https://doi.org/10.5281/zenodo.17310446 
+  url: https://doi.org/10.5281/zenodo.17310446
 
+# ✅ HARDENED: Removed staging server
 servers:
-  - url: https://africanmarketos.com 
+  - url: https://africanmarketos.com
     description: Production API Gateway (Global Edge)
 
 tags:
@@ -77,6 +78,7 @@ tags:
     description: Event subscription and delivery
 
 paths:
+  # --- CORE MVR ENDPOINTS ---
   /v1/scores:
     get:
       tags: [Core]
@@ -98,13 +100,48 @@ paths:
           schema:
             type: string
           description: Geographic region hint for context (e.g., "east-africa")
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
       responses:
         "200":
           description: Successful MVR Index calculation
+          headers:
+            Cite-As:
+              $ref: "#/components/headers/Cite-As"
+            Link-License:
+              $ref: "#/components/headers/Link-License"
+            X-RateLimit-Limit:
+              $ref: "#/components/headers/X-RateLimit-Limit"
+            X-RateLimit-Remaining:
+              $ref: "#/components/headers/X-RateLimit-Remaining"
+            X-RateLimit-Reset:
+              $ref: "#/components/headers/X-RateLimit-Reset"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ScoreResponse"
+              examples:
+                basic:
+                  summary: Example score response
+                  value:
+                    ok: true
+                    mvr_index: 0.725
+                    confidence: 0.89
+                    sector: "energy-transition"
+                    mvr_dimensions: [
+                      { name: "Embeddedness", score: 0.75, threshold_ok: true },
+                      { name: "Trust", score: 0.68, threshold_ok: true }
+                    ],
+                    mvr_threshold: true,
+                    recommendations: ["Validate with guardians; deploy reciprocity pilots."],
+                    version_info: { api: "4.0.0", model: "calibrated", mvr_proprietary: true },
+                    attribution: {
+                      framework: "Minimum Viable Relationships (MVR)",
+                      creator: "Farouk Mark Mukiibi",
+                      source: "African Market OS",
+                      license: "CC BY 4.0 | Commercial Use Licensed",
+                      doi: "10.5281/zenodo.17310446"
+                    }
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -160,6 +197,7 @@ paths:
         - ApiKeyAuth: []
         - BuyerEmail: []
 
+  # --- INTELLIGENCE ENDPOINTS ---
   /v1/trends:
     get:
       tags: [Intelligence]
@@ -179,6 +217,8 @@ paths:
           schema:
             type: integer
             default: 30
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
       responses:
         "200":
           description: Trends analysis
@@ -291,6 +331,651 @@ paths:
         - ApiKeyAuth: []
         - BuyerEmail: []
 
+  # --- GOD-MODE RELATIONAL OS ENDPOINTS ---
+  /v1/dna/sequence:
+    post:
+      tags: [RelationalOS]
+      operationId: postDNASquence
+      summary: Extract Relational DNA of an entity or market (MVR-{Relational DNA})
+      description: >
+        Computes the unique Relational DNA signature of a venture, market, or guardian network.
+        This is the ultimate "Wowo Effect" — turning relationships into a genetic, immutable identifier.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - entity_id
+                - context
+              properties:
+                entity_id:
+                  type: string
+                  description: Unique identifier for the entity (e.g., venture, market, network)
+                context:
+                  type: string
+                  description: Geographic/cultural context (e.g., "kampala-central", "nairobi-retail")
+                sector:
+                  type: string
+                  description: Sector context (e.g., "fintech", "agritech")
+      responses:
+        "200":
+          description: Relational DNA sequence
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  entity_id:
+                    type: string
+                  context:
+                    type: string
+                  relational_dna:
+                    type: object
+                    properties:
+                      signature:
+                        type: string
+                        description: Unique DNA signature hash
+                      pattern:
+                        type: object
+                        properties:
+                          trust_rhythm:
+                            type: string
+                          permission_pathway:
+                            type: string
+                          sanction_trigger:
+                            type: string
+                          reciprocity_norm:
+                            type: string
+                          dispute_resolution:
+                            type: string
+                      mutations:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            date:
+                              type: string
+                              format: date
+                            trigger:
+                              type: string
+                            effect:
+                              type: string
+                      compatibility_index:
+                        type: object
+                        properties:
+                          with_startups:
+                            type: number
+                            format: float
+                          with_externals:
+                            type: number
+                            format: float
+                          with_locals:
+                            type: number
+                            format: float
+                  version_info:
+                    type: object
+                    properties:
+                      api:
+                        type: string
+                        example: "4.0.0"
+                      feature:
+                        type: string
+                        example: "relational-dna"
+                      mvr_proprietary:
+                        type: boolean
+                        example: true
+                  attribution:
+                    $ref: "#/components/schemas/AttributionObject"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+      security:
+        - ApiKeyAuth: []
+        - BuyerEmail: []
+
+  /v1/dna/splice:
+    post:
+      tags: [RelationalOS]
+      operationId: postDNASplice
+      summary: Splice venture DNA with market DNA for optimal strategy (The Alchemist)
+      description: >
+        Combines a venture's Relational DNA with a target market's DNA to synthesize a hyper-localized, 
+        MVR-aligned playbook. This is the "Contextual Reality Synthesis" capability.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - venture_dna_signature
+                - market_dna_signature
+              properties:
+                venture_dna_signature:
+                  type: string
+                  description: DNA signature of the venture
+                market_dna_signature:
+                  type: string
+                  description: DNA signature of the target market
+                target_outcome:
+                  type: string
+                  description: Desired outcome (e.g., "market_entry", "scale", "partnership")
+      responses:
+        "200":
+          description: Synthesized contextual playbook
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  venture_dna:
+                    type: string
+                  market_dna:
+                    type: string
+                  hybrid_playbook:
+                    type: object
+                    properties:
+                      optimal_channel:
+                        type: string
+                      messaging_tone:
+                        type: string
+                      pricing_strategy:
+                        type: string
+                      guardian_pathway:
+                        type: string
+                      risk_mitigation:
+                        type: array
+                        items:
+                          type: string
+                  projected_mvr_i:
+                    type: number
+                    format: float
+                    description: Expected MVR-I after implementing playbook
+                  confidence_level:
+                    type: number
+                    format: float
+                  wowo_effect:
+                    type: string
+                    description: Guaranteed social acceptance and zero sanctions
+                  version_info:
+                    $ref: "#/components/schemas/VersionInfo"
+                  attribution:
+                    $ref: "#/components/schemas/AttributionObject"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+      security:
+        - ApiKeyAuth: []
+        - BuyerEmail: []
+
+  /v1/forecast/relational-moat:
+    post:
+      tags: [RelationalOS]
+      operationId: postRelationalMoatForecast
+      summary: Forecast Relational Moat Score (The Oracle)
+      description: >
+        Uses MVR-GD (Guardian Density) and MVR-RC (Reciprocity Coefficient) to generate a 
+        Relational Moat Score (RMS) — a time-stamped metric quantifying non-replicable social capital over 5 years.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - current_mvr_i
+                - guardian_density
+                - reciprocity_coefficient
+              properties:
+                current_mvr_i:
+                  type: number
+                  format: float
+                guardian_density:
+                  type: number
+                  format: float
+                reciprocity_coefficient:
+                  type: number
+                  format: float
+                horizon_years:
+                  type: integer
+                  default: 5
+      responses:
+        "200":
+          description: Relational Moat Forecast
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  current_mvr_i:
+                    type: number
+                    format: float
+                  guardian_density:
+                    type: number
+                    format: float
+                  reciprocity_coefficient:
+                    type: number
+                    format: float
+                  relational_moat_score:
+                    type: number
+                    format: float
+                    description: Non-replicable social capital score (0.0 - 1.0)
+                  projected_years:
+                    type: integer
+                  moat_strength:
+                    type: string
+                    enum: [Strong, Moderate, Weak, Fragile]
+                  actionable_insights:
+                    type: array
+                    items:
+                      type: string
+                  wowo_effect:
+                    type: string
+                    description: "The Value of Inevitable Trust — mathematically impossible to replicate"
+                  version_info:
+                    $ref: "#/components/schemas/VersionInfo"
+                  attribution:
+                    $ref: "#/components/schemas/AttributionObject"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+      security:
+        - ApiKeyAuth: []
+        - BuyerEmail: []
+
+  /v1/protocol/auto-adapt-weights:
+    post:
+      tags: [RelationalOS]
+      operationId: postAutoAdaptWeights
+      summary: Auto-adapt MVR indicator weights (The Architect)
+      description: >
+        Internal auditing loop that monitors real-world outcomes against MVR-I. If failures occur despite high MVR scores, 
+        this endpoint automatically adjusts the internal weighting of the six core MVR indicators to maintain fidelity.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - venture_id
+                - mvr_i_score
+                - real_world_outcome
+                - outcome_metric
+              properties:
+                venture_id:
+                  type: string
+                mvr_i_score:
+                  type: number
+                  format: float
+                real_world_outcome:
+                  type: boolean
+                  description: Did the venture succeed or fail in the real world?
+                outcome_metric:
+                  type: string
+                  description: What was the outcome metric (e.g., survival, revenue, user retention)?
+                feedback_
+                  type: object
+                  description: Additional data to inform the weight adjustment
+      responses:
+        "200":
+          description: Auto-adaptation result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  venture_id:
+                    type: string
+                  mvr_i_before:
+                    type: number
+                    format: float
+                  mvr_i_after:
+                    type: number
+                    format: float
+                  weights_adjusted:
+                    type: object
+                    description: Map of indicator to new weight
+                  reason_for_adjustment:
+                    type: string
+                  wowo_effect:
+                    type: string
+                    description: "API is unbeatable because it is never static — it evolves with market dynamics"
+                  version_info:
+                    $ref: "#/components/schemas/VersionInfo"
+                  attribution:
+                    $ref: "#/components/schemas/AttributionObject"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+      security:
+        - ApiKeyAuth: []
+        - BuyerEmail: []
+
+  # --- GRANULAR SUPER-FORMULA ENDPOINT ---
+  /v1/derive/granular-relational-risk:
+    post:
+      tags: [RelationalOS]
+      operationId: postGranularRelationalRisk
+      summary: Compute Granular Relational Risk (GRR) Super-Formula
+      description: >
+        Advanced MVR-Derived Super-Formula for assessing financing viability in hyper-local contexts (e.g., informal housing in Nairobi).
+        Uses all 6 core MVR indicators plus contextual data.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - sector
+                - region
+                - target_corridor
+                - core_mvr_indicators
+              properties:
+                sector:
+                  type: string
+                region:
+                  type: string
+                target_corridor:
+                  type: string
+                  description: Specific city/town/neighborhood
+                core_mvr_indicators:
+                  type: object
+                  required: [GD, EQ, WV, AS, RV, RC]
+                  properties:
+                    GD:
+                      type: number
+                      format: float
+                    EQ:
+                      type: number
+                      format: float
+                    WV:
+                      type: number
+                      format: float
+                    AS:
+                      type: number
+                      format: float
+                    RV:
+                      type: number
+                      format: float
+                    RC:
+                      type: number
+                      format: float
+                contextual_variables:
+                  type: object
+                  description: Additional local data for granularity (e.g., local economic indicators, political climate)
+      responses:
+        "200":
+          description: Granular Relational Risk Assessment
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  target_corridor:
+                    type: string
+                  sector:
+                    type: string
+                  granular_relational_risk_score:
+                    type: number
+                    format: float
+                    description: GRR Super-Formula output (0.0 - 1.0)
+                  mvr_i_contribution:
+                    type: object
+                    description: How each MVR indicator contributed to the GRR
+                  financing_viability:
+                    type: string
+                    enum: [High, Moderate, Low, Very Low]
+                  actionable_narrative:
+                    type: string
+                    description: Human-readable, explainable output detailing the risk factors and recommendations
+                  super_formula_details:
+                    type: object
+                    description: The actual GRR formula used (auditable, version-locked)
+                  version_info:
+                    $ref: "#/components/schemas/VersionInfo"
+                  attribution:
+                    $ref: "#/components/schemas/AttributionObject"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+      security:
+        - ApiKeyAuth: []
+        - BuyerEmail: []
+
+  # --- NON-EXTRACTIVE SCALE PROTOCOL ---
+  /v1/protocol/non-extractive-growth-cap:
+    post:
+      tags: [RelationalOS]
+      operationId: postNonExtractiveGrowthCap
+      summary: Calculate MVR-Validated Growth Cap (The MVR Brake)
+      description: >
+        Uses MVR-I to algorithmically determine a 'MVR-Validated Growth Cap' — a speed limit for scaling 
+        that prevents trust erosion. Returns an actionable narrative explaining which indicator is constraining growth.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - current_mvr_i
+                - current_scale
+                - target_sector
+              properties:
+                current_mvr_i:
+                  type: number
+                  format: float
+                current_scale:
+                  type: integer
+                  description: Current number of users/distributors/agents
+                target_sector:
+                  type: string
+                  description: e.g., "fmcg-distribution", "agri-inputs"
+                target_region:
+                  type: string
+      responses:
+        "200":
+          description: Non-Extractive Growth Cap
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  current_mvr_i:
+                    type: number
+                    format: float
+                  current_scale:
+                    type: integer
+                  target_sector:
+                    type: string
+                  mvr_validated_growth_cap:
+                    type: integer
+                    description: Maximum recommended scale increase
+                  growth_speed_limit:
+                    type: string
+                    description: e.g., "Slow down", "Steady", "Accelerate"
+                  bottleneck_indicator:
+                    type: string
+                    description: Which MVR indicator is constraining growth (e.g., "RC", "GD")
+                  actionable_narrative:
+                    type: string
+                    description: Human-readable explanation of why the cap exists and what to do
+                  version_info:
+                    $ref: "#/components/schemas/VersionInfo"
+                  attribution:
+                    $ref: "#/components/schemas/AttributionObject"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+      security:
+        - ApiKeyAuth: []
+        - BuyerEmail: []
+
+  # --- SYSTEMIC FAILURE FORESIGHT ---
+  /v1/transfer/systemic-failure-foresight:
+    post:
+      tags: [RelationalOS]
+      operationId: postSystemicFailureForesight
+      summary: Contextual State Transfer - Predict systemic failure (The Foresight Engine)
+      description: >
+        Maps a systemic relational failure state (e.g., low WV in political cycle) and transfers that MVR-I differential 
+        to predict failure points in a different market (e.g., cross-border logistics). God-mode capability.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - source_market_state
+                - target_market
+                - transfer_coefficient
+              properties:
+                source_market_state:
+                  type: object
+                  required: [mvr_i, primary_indicator, failure_date]
+                  properties:
+                    mvr_i:
+                      type: number
+                      format: float
+                    primary_indicator:
+                      type: string
+                      description: e.g., "WV", "GD", "AS"
+                    failure_date:
+                      type: string
+                      format: date
+                    contributing_factors:
+                      type: array
+                      items:
+                        type: string
+                target_market:
+                  type: string
+                  description: The market to predict failure for
+                transfer_coefficient:
+                  type: number
+                  format: float
+                  description: How strongly the source state affects the target (0.0 - 1.0)
+                horizon_days:
+                  type: integer
+                  default: 90
+      responses:
+        "200":
+          description: Systemic Failure Foresight
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  source_market_state:
+                    $ref: "#/components/schemas/MarketState"
+                  target_market:
+                    type: string
+                  transfer_coefficient:
+                    type: number
+                    format: float
+                  projected_failure_date:
+                    type: string
+                    format: date
+                  primary_mvr_indicator_reason:
+                    type: string
+                    description: The indicator most likely to cause failure in the target
+                  confidence_level:
+                    type: number
+                    format: float
+                  wowo_effect:
+                    type: string
+                    description: "The ultimate 'God Mode' ability — predicting systemic failure across unrelated markets"
+                  version_info:
+                    $ref: "#/components/schemas/VersionInfo"
+                  attribution:
+                    $ref: "#/components/schemas/AttributionObject"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+      security:
+        - ApiKeyAuth: []
+        - BuyerEmail: []
+
+  # --- STANDARD ENDPOINTS ---
+  /v1/meta:
+    get:
+      tags: [Utilities]
+      operationId: getMeta
+      summary: API metadata and endpoints list
+      description: Public metadata describing endpoints and limits.
+      responses:
+        "200":
+          description: API metadata
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MetaResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+      security:
+        - ApiKeyAuth: []
+        - BuyerEmail: []
+
+  /v1/usage:
+    get:
+      tags: [Utilities]
+      operationId: getUsage
+      summary: Get current API usage for the license key
+      description: Returns usage count for the authenticated key (requires auth)
+      responses:
+        "200":
+          description: Usage information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsageResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+      security:
+        - ApiKeyAuth: []
+        - BuyerEmail: []
+
   /v1/health:
     get:
       tags: [Utilities]
@@ -330,6 +1015,51 @@ paths:
         "503":
           $ref: "#/components/responses/ServiceUnavailable"
 
+  /v1/auth/check:
+    post:
+      tags: [Utilities]
+      operationId: postAuthCheck
+      summary: Validate an API license key
+      description: Check license key and buyer email association.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - key
+                - buyer_email
+              properties:
+                key:
+                  type: string
+                buyer_email:
+                  type: string
+                  format: email
+      responses:
+        "200":
+          description: License validation result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  plan:
+                    type: string
+                    example: "pro"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+      security:
+        - ApiKeyAuth: []
+        - BuyerEmail: []
+
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -339,7 +1069,7 @@ components:
       description: |
         Your MVR API License Key.
         ⚠️ Keep this secret! Never commit to version control.
-        Obtain from: https://africanmarketos.com/get-access 
+        Obtain from: https://africanmarketos.com/get-access
     BuyerEmail:
       type: apiKey
       in: header
@@ -347,6 +1077,58 @@ components:
       description: |
         Email associated with the license key.
         ⚠️ Keep this secret! Never commit to version control.
+    SessionAuth:
+      type: apiKey
+      in: header
+      name: x-mvr-session
+      description: |
+        Temporary session token obtained from /v1/session/new.
+        ⚠️ Keep this secret! Has limited lifetime.
+
+  headers:
+    Cite-As:
+      description: Preferred citation string for this response
+      schema:
+        type: string
+      example: 'Source: African Market OS - Farouk Mark Mukiibi'
+    Link-License:
+      description: RFC5988 Link header containing license URL
+      schema:
+        type: string
+      example: '<https://africanmarketos.com/.well-known/mvr-license.json>; rel="license"'
+    X-RateLimit-Limit:
+      description: Request limit for the current plan
+      schema:
+        type: integer
+      example: 5000
+    X-RateLimit-Remaining:
+      description: Remaining requests in the current window
+      schema:
+        type: integer
+      example: 4998
+    X-RateLimit-Reset:
+      description: UTC epoch seconds until rate-limit reset
+      schema:
+        type: integer
+      example: 1700000000
+
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+      description: Page number for paginated responses
+    LimitParam:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        default: 50
+        maximum: 1000
+      description: Maximum items per page
 
   responses:
     BadRequest:
@@ -354,32 +1136,19 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              ok:
-                type: boolean
-                example: false
-              error:
-                type: string
-              message:
-                type: string
-              reference:
-                type: string
-                example: "GLOBAL_ERR_1702540800"
+            $ref: "#/components/schemas/ErrorResponse"
     Unauthorized:
       description: Unauthorized - missing or invalid credentials
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              ok:
-                type: boolean
-                example: false
-              error:
-                type: string
-              message:
-                type: string
+            $ref: "#/components/schemas/ErrorResponse"
+    Forbidden:
+      description: Forbidden - insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
     TooManyRequests:
       description: Rate limit exceeded
       headers:
@@ -390,29 +1159,13 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              ok:
-                type: boolean
-                example: false
-              error:
-                type: string
-              message:
-                type: string
+            $ref: "#/components/schemas/ErrorResponse"
     ServiceUnavailable:
       description: Service temporarily unavailable
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              ok:
-                type: boolean
-                example: false
-              error:
-                type: string
-              message:
-                type: string
+            $ref: "#/components/schemas/ErrorResponse"
 
   schemas:
     ScoreResponse:
@@ -466,49 +1219,30 @@ components:
           type: array
           items: { type: string }
         version_info:
-          type: object
-          properties:
-            api:
-              type: string
-              example: "4.0.0"
-            model:
-              type: string
-              example: "calibrated"
-            mvr_proprietary:
-              type: boolean
-              example: true
+          $ref: "#/components/schemas/VersionInfo"
         attribution:
+          $ref: "#/components/schemas/AttributionObject"
+
+    SurveyAggregateResponse:
+      allOf:
+        - $ref: "#/components/schemas/ScoreResponse"
+      properties:
+        matrix_axes:
           type: object
           properties:
-            framework:
-              type: string
-              example: "Minimum Viable Relationships (MVR)"
-            creator:
-              type: string
-              example: "Farouk Mark Mukiibi"
-            source:
-              type: string
-              example: "African Market OS"
-            license:
-              type: string
-              example: "CC BY 4.0 | Commercial Use Licensed"
-            doi:
-              type: string
-              example: "10.5281/zenodo.17310446"
-
-    StakeholderResponse:
-      type: object
-      properties:
-        dimension:
-          type: string
-        scale:
-          type: integer
-          minimum: 1
-          maximum: 5
-        reasons:
+            viability:
+              type: number
+              format: float
+              example: 0.72
+            embeddedness:
+              type: number
+              format: float
+              example: 0.61
+        insights:
           type: array
-          items:
-            type: string
+          items: { type: string }
+        summary:
+          type: string
 
     TrendsResponse:
       type: object
@@ -528,35 +1262,9 @@ components:
         interpretation:
           type: string
         version_info:
-          type: object
-          properties:
-            api:
-              type: string
-              example: "4.0.0"
-            feature:
-              type: string
-              example: "trends"
-            mvr_proprietary:
-              type: boolean
-              example: true
+          $ref: "#/components/schemas/VersionInfo"
         attribution:
-          type: object
-          properties:
-            framework:
-              type: string
-              example: "Minimum Viable Relationships (MVR)"
-            creator:
-              type: string
-              example: "Farouk Mark Mukiibi"
-            source:
-              type: string
-              example: "African Market OS"
-            license:
-              type: string
-              example: "CC BY 4.0 | Commercial Use Licensed"
-            doi:
-              type: string
-              example: "10.5281/zenodo.17310446"
+          $ref: "#/components/schemas/AttributionObject"
 
     ForecastResponse:
       type: object
@@ -581,35 +1289,9 @@ components:
         pmf_projection:
           type: string
         version_info:
-          type: object
-          properties:
-            api:
-              type: string
-              example: "4.0.0"
-            feature:
-              type: string
-              example: "forecast"
-            mvr_proprietary:
-              type: boolean
-              example: true
+          $ref: "#/components/schemas/VersionInfo"
         attribution:
-          type: object
-          properties:
-            framework:
-              type: string
-              example: "Minimum Viable Relationships (MVR)"
-            creator:
-              type: string
-              example: "Farouk Mark Mukiibi"
-            source:
-              type: string
-              example: "African Market OS"
-            license:
-              type: string
-              example: "CC BY 4.0 | Commercial Use Licensed"
-            doi:
-              type: string
-              example: "10.5281/zenodo.17310446"
+          $ref: "#/components/schemas/AttributionObject"
 
     CompareResponse:
       type: object
@@ -624,35 +1306,136 @@ components:
         policy_trace:
           type: object
         version_info:
-          type: object
-          properties:
-            api:
-              type: string
-              example: "4.0.0"
-            feature:
-              type: string
-              example: "compare"
-            mvr_proprietary:
-              type: boolean
-              example: true
+          $ref: "#/components/schemas/VersionInfo"
         attribution:
+          $ref: "#/components/schemas/AttributionObject"
+
+    MetaResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        api_name:
+          type: string
+        version:
+          type: string
+        model:
+          type: string
+        endpoints:
+          type: array
+          items:
+            type: string
+        limits:
           type: object
           properties:
-            framework:
-              type: string
-              example: "Minimum Viable Relationships (MVR)"
-            creator:
-              type: string
-              example: "Farouk Mark Mukiibi"
-            source:
-              type: string
-              example: "African Market OS"
-            license:
-              type: string
-              example: "CC BY 4.0 | Commercial Use Licensed"
-            doi:
-              type: string
-              example: "10.5281/zenodo.17310446"
+            standard:
+              type: integer
+            pro:
+              type: integer
+            enterprise:
+              type: integer
+        last_model_refresh:
+          type: string
+          nullable: true
+        model_fingerprint:
+          type: string
+          nullable: true
+        attribution:
+          $ref: "#/components/schemas/AttributionObject"
+
+    UsageResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        plan:
+          type: string
+        date:
+          type: string
+          format: date
+        used_today:
+          type: integer
+        daily_limit:
+          type: integer
+        attribution:
+          $ref: "#/components/schemas/AttributionObject"
+
+    StakeholderResponse:
+      type: object
+      properties:
+        dimension:
+          type: string
+        scale:
+          type: integer
+          minimum: 1
+          maximum: 5
+        reasons:
+          type: array
+          items:
+            type: string
+
+    MarketState:
+      type: object
+      properties:
+        mvr_i:
+          type: number
+          format: float
+        primary_indicator:
+          type: string
+        failure_date:
+          type: string
+          format: date
+        contributing_factors:
+          type: array
+          items:
+            type: string
+
+    VersionInfo:
+      type: object
+      properties:
+        api:
+          type: string
+          example: "4.0.0"
+        feature:
+          type: string
+        mvr_proprietary:
+          type: boolean
+          example: true
+
+    AttributionObject:
+      type: object
+      properties:
+        framework:
+          type: string
+          example: "Minimum Viable Relationships (MVR)"
+        creator:
+          type: string
+          example: "Farouk Mark Mukiibi"
+        source:
+          type: string
+          example: "African Market OS"
+        license:
+          type: string
+          example: "CC BY 4.0 | Commercial Use Licensed"
+        doi:
+          type: string
+          example: "10.5281/zenodo.17310446"
+
+    ErrorResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          example: false
+        error:
+          type: string
+        message:
+          type: string
+        reference:
+          type: string
+          example: "GLOBAL_ERR_1702540800"
+        attribution:
+          $ref: "#/components/schemas/AttributionObject"
 
 security:
   - ApiKeyAuth: []
