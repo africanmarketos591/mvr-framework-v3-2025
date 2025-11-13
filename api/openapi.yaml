@@ -31,8 +31,8 @@ externalDocs:
   url: https://doi.org/10.5281/zenodo.17310446
 
 servers:
-  - url: https://mvr-api.africanmarketos.workers.dev
-    description: Production API Gateway (Cloudflare Workers)
+  - url: https://africanmarketos.com/v1/
+    description: Production API Gateway (Custom Domain)
 
 tags:
   - name: Scores
