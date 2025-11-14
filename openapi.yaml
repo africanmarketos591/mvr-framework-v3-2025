@@ -1294,3 +1294,4 @@ components:
 security:
   - ApiKeyAuth: []
   - BuyerEmail: []
+Openapi synced to Postman
