@@ -1,0 +1,22 @@
+name: Sync OpenAPI to Postman
+
+on:
+  push:
+    paths:
+      - "openapi.yaml"
+
+jobs:
+  update-postman:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update OpenAPI schema in Postman
+        run: |
+          curl --location --request PUT \
+          "https://api.getpostman.com/apis/2263c10b-54d7-4681-9de4-0aee85471b1c/schemas/645ee680a96496e698754e56f5abab0d3ee5d5c7" \
+          --header "X-Api-Key: ${{ secrets.POSTMAN_API_KEY }}" \
+          --header "Content-Type: application/json" \
+          --data "@openapi.yaml"
