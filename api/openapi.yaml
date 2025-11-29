@@ -7,7 +7,7 @@ info:
     The African Market OS-MVR API exposes AMOS, a relational risk and credit physics
     engine designed for high-context African markets.
 
-    AMOS-MVR API measures *relational readiness* by combining financial signals with the
+    AMOS measures *relational readiness* by combining financial signals with the
     Minimum Viable Relationships (MVR) framework: trust, belonging, embeddedness,
     permission, reciprocity, guardian vouchers, and cultural-market fit.
 
@@ -487,12 +487,6 @@ components:
           description: >
             Days since last observed activity. Core input for ghosting risk and
             activity rhythm.
-          x-concept-visualization: >
-             High days_silent values trigger exponential decay in trust scores.
-             
-
-[Image of exponential decay graph]
-
         days_since_last_activity:
           type: number
           format: double
@@ -711,12 +705,6 @@ components:
           description: Overall confidence in the RRS (0–100).
         RRS_CONFIDENCE_INTERVAL:
           type: object
-          description: >
-             Confidence bounds (1-sigma) for the estimated score.
-             
-
-[Image of normal distribution confidence interval]
-
           properties:
             lower:
               type: number
@@ -878,10 +866,6 @@ components:
           description: >
             Final operational decision ("APPROVE", "HOLD", "DECLINE") aligned with
             the credit engine.
-            
-
-[Image of a green traffic light]
-
         MVR_GATE_REASONS:
           type: array
           items:
@@ -938,12 +922,6 @@ components:
         SEASONAL_FACTOR:
           type: number
           format: float
-          description: >
-             Multiplier derived from monthly seasonal curves for the region.
-             
-
-[Image of linear interpolation graph]
-
         GRANT_HAIRCUT_APPLIED:
           type: boolean
 
@@ -1033,7 +1011,7 @@ components:
           example: "OK"
         version:
           type: string
-          example: "v9.2.6-GOD-MODE-FINAL"
+          example: "v9.2.6-FINAL"
         wrapper:
           type: string
           example: "v9.2.6-UTILITY-RESTORE"
