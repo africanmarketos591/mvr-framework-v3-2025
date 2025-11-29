@@ -121,45 +121,4 @@ paths:
                   name: "Tier-1 EA Telco & Mobile Money Anchor (Illustrative)"
                   sector: "FINTECH"
                   region: "EA"
-                  revenue: 307142100000
-                  expenses: 222142100000
-                  cash: 22098100000
-                  total_debt: 120881300000
-                  arrears: 7000000000
-                  revenue_growth: 0.106
-                  days_silent: 1
-                  occupancy_rate: 97
-                  collection_rate: 97
-                  guardian_endorsements: 8
-                  number_of_customers: 46750000
-                  number_of_suppliers: 1000
-                  grant_dependency: 0.0
-                  currency: "KES"
-                  fx_exposed_debt: 40000000000
-                  fx_rate: 130.0
-                  fx_rate_12m_ago: 118.0
-                  forward_cover: 15000000000
-                  outage_hours_per_day: 2
-                  diesel_share_opex: 0.08
-                  current_credit_limit_local: 200000000000
-                  mvr:
-                    mvr_i: 83
-                    embeddedness: 86
-                    trust: 85
-                    reciprocity: 79
-                    guardian_vouchers: 82
-                    continuity: 85
-                    channel_permission: 80
-                  unstructured_text: >
-                    Pan-African telecom and mobile money operator with dominant
-                    market share and strong customer stickiness; highly cash-generative
-                    with no default history.
-              fmcg_beverage_anchor:
-                summary: Africa beverage bottler anchor (illustrative)
-                value:
-                  amos_id: "AFRICA_BEVERAGE_BOTTLER_ANCHOR_2024"
-                  name: "Africa Beverage Bottler Anchor (Illustrative)"
-                  sector: "FMCG_BEVERAGE"
-                  region: "EA"
-                  revenue: 2900000000000
-                  expenses
+                  revenue
