@@ -1,30 +1,36 @@
 openapi: 3.0.3
+
 info:
   title: "African Market OS-MVR API"
   version: "1.0.0"
   description: |
     The African Market OS-MVR API exposes AMOS, a relational risk and credit physics
     engine designed for high-context African markets.
+
     AMOS-MVR API measures *relational readiness* by combining financial signals with the
     Minimum Viable Relationships (MVR) framework: trust, belonging, embeddedness,
     permission, reciprocity, guardian vouchers, and cultural-market fit.
+
     At its core, the API estimates:
       - Residual Risk Score (RRS) on a 0–100 scale
       - Relational readiness (MVR-I) on a 0–100 scale
       - Relational porosity (Pz) – probability of leakage / default
       - Cash runway and liquidity state
       - Safe credit limits in local currency and USD
+
     The engine is optimized for African trade credit and fintech / FMCG corridors,
     but can be used in any context where *relational credit*, embeddedness and
     community guardianship matter as much as pure balance sheet strength.
+
     Licensing and Access
     --------------------
     - This API requires a valid MVR / AMOS license key.
     - To request access, visit: https://africanmarketos.com/get-access
     - Plans (indicative):
         • Standard: 5,000 calls / day, 300 calls / minute
-        • Pro: 50,000 calls / day, 3,000 calls / minute
+        • Pro:      50,000 calls / day, 3,000 calls / minute
         • Enterprise: 500,000+ calls / day, 30,000 calls / minute (negotiated)
+
     Relational Readiness & MVR
     --------------------------
     MVR-I (Minimum Viable Relationships Index) is a composite index across:
@@ -33,9 +39,11 @@ info:
       - Guardian vouchers (who will stand in the gap when things go wrong?)
       - Continuity and relationship longevity
       - Permission and cultural-market fit (do people want them in their space?)
+
     AMOS uses these relational signals to build a "relational shield" that partially
     contains base porosity (raw probability of credit leakage / default), and then
     overlays FX, cold-chain, and corridor physics.
+
     Usage Notes
     -----------
     - All amounts in the request and response are in *local currency*, unless an
@@ -43,6 +51,7 @@ info:
     - The canonical scoring endpoint is POST /v1/amos/score.
     - This OpenAPI spec describes the public surface only. Internal physics and
       calibration are frozen in the engine binary and not exposed.
+
   termsOfService: https://africanmarketos.com/african-market-os-mvr-framework-commercial-referral-use-policy/
   contact:
     name: African Market OS
@@ -70,38 +79,45 @@ info:
     by public financial data from anonymous "anchor" entities (e.g. large telco, major
     beverage bottler, regional supermarket). They do NOT constitute credit ratings,
     investment advice, or formal opinions on any specific named issuer.
+
     AMOS outputs are sensitive to input assumptions and are provided for informational
     and operational decision-support only. They are not a substitute for independent
     credit, legal, or investment judgement.
+
 externalDocs:
   description: "Minimum Viable Relationships (MVR) Framework (DOI)"
   url: https://doi.org/10.5281/zenodo.17310446
+
 servers:
   - url: https://africanmarketos.com
     description: Production API Gateway
+
 tags:
-  - name: AMOS-MVR API
+  - name: AMOS
     description: >
-      AMOS-MVR API relational risk scoring and safe credit limit computation. Measures
+      AMOS relational risk scoring and safe credit limit computation. Measures
       relational readiness (MVR), residual risk, and relational porosity for African
       trade credit and embedded fintech.
   - name: Utilities
     description: Health and basic metadata / status utilities.
+
 paths:
   /v1/amos/score:
     post:
-      tags: [AMOS-MVR API]
+      tags: [AMOS]
       operationId: scoreAMOS
       summary: Compute AMOS relational risk score and safe credit limit
       description: |
         Scores an entity using AMOS Relational Porosity v9.x and the Minimum Viable
         Relationships (MVR) framework to produce:
+
           - Residual Risk Score (RRS)
           - Relational porosity (Pz)
           - MVR-I (relational readiness index)
           - Cash runway and liquidity state
           - Estimated safe credit limit (local + USD)
           - Recommended action (increase, reduce, maintain; freeze & recover)
+
         The engine is designed to be robust to thin or noisy data. Missing fields
         impact the DATA_COMPLETENESS_SCORE and may trigger a data-quality veto.
       security:
@@ -162,4 +178,871 @@ paths:
                   sector: "FMCG_BEVERAGE"
                   region: "EA"
                   revenue: 2900000000000
-                  expenses
+                  expenses: 2600000000000
+                  cash: 170000000000
+                  total_debt: 640000000000
+                  arrears: 43000000000
+                  revenue_growth: 0.06
+                  days_silent: 2
+                  occupancy_rate: 98
+                  collection_rate: 96
+                  guardian_endorsements: 7
+                  number_of_customers: 10000000
+                  number_of_suppliers: 5000
+                  grant_dependency: 0.0
+                  currency: "KES"
+                  fx_exposed_debt: 256000000000
+                  fx_rate: 150.0
+                  fx_rate_12m_ago: 130.0
+                  forward_cover: 80000000000
+                  outage_hours_per_day: 2
+                  diesel_share_opex: 0.05
+                  current_credit_limit_local: 213000000000
+                  mvr:
+                    mvr_i: 80
+                    embeddedness: 82
+                    trust: 81
+                    reciprocity: 78
+                    guardian_vouchers: 80
+                    continuity: 82
+                    channel_permission: 76
+                  unstructured_text: >
+                    Large Africa beverage bottler; high cooler penetration and strong
+                    modern trade with some traditional trade delays.
+      responses:
+        "200":
+          description: AMOS relational risk score and credit decision
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AMOSScoreResponse"
+              examples:
+                example:
+                  summary: Successful AMOS score response (simplified)
+                  value:
+                    RRS_SCORE: 60.6
+                    RRS_CONFIDENT: 60.6
+                    RRS_CONFIDENCE: 100
+                    RRS_CONFIDENCE_INTERVAL:
+                      lower: 58.6
+                      upper: 62.6
+                      error: 2.0
+                    Pz_POROSITY: 0.22
+                    meta:
+                      EXPLANATION:
+                        porosity: "0.22"
+                        mvr_shield: "0.80"
+                        mvr_shield_factor: "0.150"
+                        final_contained_pd: "0.0680"
+                        shield_impact_percentage: "15"
+                        headline: "Base porosity 0.08 with MVR shield 0.80 → 0.0680 PD; FX & logistics leaks → final Pz 0.22"
+                        risk_narrative: "Base porosity before relational shielding is 0.08..."
+                      SECTOR: "FMCG_BEVERAGE"
+                      REGION: "EA"
+                      GRANT_DEPENDENCY: 0
+                      DAYS_SILENT: 2
+                      PD_GHOST: 0
+                      MVR_I: 80
+                      MVR_BAND: "EMBEDDED"
+                      MVR_STRONGEST_DIMENSIONS: ["embeddedness","continuity"]
+                      MVR_WEAKEST_DIMENSIONS: ["channel_permission","cultural_fit"]
+                      COLLECTION_RATE: 96
+                      DATA_COMPLETENESS_SCORE: 100
+                      MVR_GATE_DECISION: "APPROVE"
+                      MVR_GATE_REASONS:
+                        - "INCREASE to 435000000000 – Strategic Champion (6.0× booster – collection 96.0%) [Seas. Adj: 1.00x, Reg: EA]"
+                      HEADLINE: "RRS 60.6 / MVR-I 80 - APPROVE. Action: INCREASE to 435000000000 – Strategic Champion (6.0× booster – collection 96.0%) [Seas. Adj: 1.00x, Reg: EA]"
+                      CASH_METRICS:
+                        cash_runway_days: 24
+                        runwayState: "CRITICAL"
+                        net_cash: -470000000000
+                        burn_rate_per_day: 7123287671.23
+                    CREDIT_ENGINE:
+                      ESTIMATED_SAFE_CREDIT_LIMIT_LOCAL: 435000000000
+                      ESTIMATED_SAFE_CREDIT_LIMIT_USD: 2900000000
+                      RECOMMENDED_ACTION: "INCREASE to 435000000000 – Strategic Champion (6.0× booster – collection 96.0%) [Seas. Adj: 1.00x, Reg: EA]"
+                      MVR_DECISION: "APPROVE"
+                      SEASONAL_FACTOR: 1.0
+                      GRANT_HAIRCUT_APPLIED: false
+                      EXPOSURE_TO_REVENUE_RATIO: 0.0734
+                      RECOMMENDED_TO_CURRENT_RATIO: 2.042
+                    WRAPPER:
+                      version: "v9.2.6-UTILITY-RESTORE"
+                      core_version: "v9.2.6-GOD-MODE-FINAL"
+                      request_id: "example-uuid"
+                      timestamp: "2025-11-29T17:19:36.514Z"
+                    MODEL_METADATA:
+                      model_version: "AMOS-v9.2.6"
+                      core_version: "v9.2.6-GOD-MODE-FINAL"
+                      wrapper_version: "v9.2.6-UTILITY-RESTORE"
+                      calibration_date: "UNSPECIFIED"
+                      regulatory_status: "INTERNAL_USE_ONLY"
+                      physics_framework: "Relational Porosity v9.x"
+        "400":
+          description: Validation or data-quality veto
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AMOSErrorResponse"
+              examples:
+                invalid_input:
+                  summary: Invalid or missing core fields
+                  value:
+                    error: "Invalid input"
+                    details:
+                      - field: "revenue"
+                        message: "revenue is required"
+                    request_id: "example-uuid"
+                data_quality_veto:
+                  summary: Data completeness too low
+                  value:
+                    error: "Data Quality Veto: Insufficient Data Completeness"
+                    details:
+                      data_completeness_score: 62
+                      missing_fields: ["sku_sales_history"]
+                      critical_missing_fields: []
+                    request_id: "example-uuid"
+        "401":
+          description: Missing or invalid license / buyer email
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AMOSErrorResponse"
+              examples:
+                unauthorized:
+                  summary: Missing license key
+                  value:
+                    error: "License Required"
+                    request_id: "example-uuid"
+        "500":
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AMOSErrorResponse"
+              examples:
+                internal:
+                  summary: Generic internal error
+                  value:
+                    error: "Internal error"
+                    request_id: "example-uuid"
+
+  /health:
+    get:
+      tags: [Utilities]
+      operationId: getHealth
+      summary: Health check and basic engine metadata
+      description: >
+        Lightweight health probe. Returns engine version and wrapper version. This
+        endpoint does not require authentication.
+      responses:
+        "200":
+          description: Health status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+              examples:
+                example:
+                  summary: Health response example
+                  value:
+                    status: "OK"
+                    version: "v9.2.6-GOD-MODE-FINAL"
+                    wrapper: "v9.2.6-UTILITY-RESTORE"
+                    request_id: "example-uuid"
+                    timestamp: "2025-11-29T17:19:36.514Z"
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-mvr-license
+      description: |
+        MVR / AMOS license key used for authenticated access.
+
+        To request a license, visit:
+        https://africanmarketos.com/get-access
+    BuyerEmail:
+      type: apiKey
+      in: header
+      name: x-buyer-email
+      description: Email associated with the license key (for governance and audit).
+
+  schemas:
+    AMOSScoreRequest:
+      type: object
+      required:
+        - amos_id
+        - sector
+        - region
+        - revenue
+        - cash
+        - days_silent
+        - occupancy_rate
+        - collection_rate
+      properties:
+        amos_id:
+          type: string
+          description: Stable identifier for this entity within your systems.
+        id:
+          type: string
+          description: Optional legacy ID (alias for amos_id).
+        name:
+          type: string
+          description: Human-readable name of the entity.
+        legal_name:
+          type: string
+          description: Legal registered name (if different from name).
+        sector:
+          type: string
+          description: >
+            Sector tag used to select physics and rhythms. Case-insensitive; will be
+            normalized to upper-case. Examples: FINTECH, FMCG_BEVERAGE, FMCG_RETAIL,
+            FMCG_PERSONAL_CARE, GENERIC.
+          enum:
+            - GENERIC
+            - FINTECH
+            - FMCG_RETAIL
+            - FMCG_BEVERAGE
+            - FMCG_OILS
+            - FMCG_DAIRY
+            - FMCG_PERSONAL_CARE
+            - FMCG_FOODS
+            - FMCG_ALCOHOL
+        region:
+          type: string
+          description: >
+            Region code used for seasonal pressure (EA, WA, ZA, GENERIC, etc.).
+            Case-insensitive; will be normalized to upper-case.
+          example: "EA"
+        revenue:
+          type: number
+          format: double
+          minimum: 0
+          description: >
+            Annual revenue in local currency. Must use the same currency as
+            current_credit_limit_local for comparisons.
+        total_revenue:
+          type: number
+          format: double
+          minimum: 0
+          description: Optional alias for revenue.
+        expenses:
+          type: number
+          format: double
+          minimum: 0
+          description: >
+            Annual operating expenses / COGS in local currency, used for burn-rate
+            and cash runway computation.
+        opex:
+          type: number
+          format: double
+          minimum: 0
+          description: Optional alias for expenses.
+        cash:
+          type: number
+          format: double
+          minimum: 0
+          description: >
+            Cash and cash-equivalents in local currency. Core input for liquidity
+            and cash runway, i.e. days to death.
+        cash_balance:
+          type: number
+          format: double
+          minimum: 0
+          description: Optional alias for cash.
+        total_debt:
+          type: number
+          format: double
+          minimum: 0
+          description: >
+            Total interest-bearing debt in local currency. Used in leverage and
+            net cash calculations.
+        debt_total:
+          type: number
+          format: double
+          minimum: 0
+          description: Optional alias for total_debt.
+        arrears:
+          type: number
+          format: double
+          minimum: 0
+          description: >
+            Overdue receivables / arrears in local currency. Drives base porosity
+            and AFI_SCORE.
+        overdue:
+          type: number
+          format: double
+          minimum: 0
+          description: Optional alias for arrears.
+        revenue_growth:
+          type: number
+          format: double
+          description: Annual revenue growth rate (e.g., 0.10 for +10% YoY).
+        days_silent:
+          type: number
+          format: double
+          minimum: 0
+          description: >
+            Days since last observed activity. Core input for ghosting risk and
+            activity rhythm.
+          x-concept-visualization: >
+             High days_silent values trigger exponential decay in trust scores.
+             
+
+[Image of exponential decay graph]
+
+        days_since_last_activity:
+          type: number
+          format: double
+          minimum: 0
+          description: Optional alias for days_silent.
+        days_since_last_scan:
+          type: number
+          format: double
+          minimum: 0
+          description: Optional alias for days_silent.
+        occupancy_rate:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: >
+            Utilization / occupancy as a percentage (0–100). Used as a proxy for
+            demand and capacity usage.
+        collection_rate:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: >
+            Collection rate as a percentage (0–100). Central signal for trust and
+            repayment behavior.
+        guardian_endorsements:
+          type: number
+          format: double
+          minimum: 0
+          description: >
+            Number of credible guardians / endorsers willing to vouch. Drives
+            guardian vouchers and relational shield.
+        number_of_customers:
+          type: number
+          format: double
+          minimum: 0
+          description: Approximate number of active customers.
+        number_of_suppliers:
+          type: number
+          format: double
+          minimum: 0
+          description: Approximate number of active suppliers.
+        grant_dependency:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: >
+            Fraction of revenue that is grant/donor funded (0–1). Above 0.5, a
+            grant haircut is applied to effective revenue.
+        active_users:
+          type: number
+          format: double
+          minimum: 0
+          description: Optional active user count (defaults to number_of_customers).
+        active_customers:
+          type: number
+          format: double
+          minimum: 0
+          description: Optional alias for active_users.
+        sku_sales_8w:
+          type: array
+          items:
+            type: number
+            format: double
+            minimum: 0
+          description: >
+            Optional SKU-level sales volumes for up to 8 weeks. Used for volatility
+            and promo cannibalisation analysis.
+        promo_units:
+          type: number
+          format: double
+          minimum: 0
+          description: Units sold on promotion in the analysis window.
+        baseline_units:
+          type: number
+          format: double
+          minimum: 0
+          description: Units sold off-promo in the analysis window.
+        currency:
+          type: string
+          description: ISO or local currency code (e.g. KES, ZAR, GHS, EUR).
+        fx_rate:
+          type: number
+          format: double
+          minimum: 0
+          description: >
+            FX rate (local per USD) at scoring date. Used to compute USD safe limit
+            and FX slope when fx_exposed_debt is present.
+        fx_rate_12m_ago:
+          type: number
+          format: double
+          minimum: 0
+          description: FX rate (local per USD) 12 months ago.
+        forward_cover:
+          type: number
+          format: double
+          minimum: 0
+          description: Nominal size of FX forward / hedge cover in local currency.
+        fx_exposed_debt:
+          type: number
+          format: double
+          minimum: 0
+          description: Portion of debt exposed to FX risk in local currency.
+        outage_hours_per_day:
+          type: number
+          format: double
+          minimum: 0
+          description: Average daily power outage hours; used in cold-chain leakage.
+        diesel_share_opex:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: >
+            Share of operating expenses spent on diesel (0–1). High values amplify
+            cold-chain risk.
+        corridor_id:
+          type: string
+          description: Optional corridor identifier for logistics analysis.
+        port_dwell_days:
+          type: number
+          format: double
+          minimum: 0
+          description: Port dwell days; drives corridor leakage.
+        truck_turnaround_days:
+          type: number
+          format: double
+          minimum: 0
+          description: Optional trucking turnaround time.
+        current_credit_limit_local:
+          type: number
+          format: double
+          minimum: 0
+          description: >
+            Current credit limit in local currency. Used to compute recommended
+            action (increase, reduce, maintain).
+        prev_ghosting:
+          type: number
+          format: double
+          description: Optional override / prior for ghosting status.
+        mvr:
+          type: object
+          description: >
+            Optional explicit MVR relational scores. If omitted, AMOS infers MVR-I
+            and dimensions from financial and activity signals.
+          properties:
+            mvr_i:
+              type: number
+              format: double
+              minimum: 0
+              maximum: 100
+              description: >
+                Minimum Viable Relationships Index (0–100) – relational readiness
+                across trust, belonging, embeddedness, permission, and cultural-market fit.
+            embeddedness:
+              type: number
+              format: double
+              minimum: 0
+              maximum: 100
+            trust:
+              type: number
+              format: double
+              minimum: 0
+              maximum: 100
+            cultural_fit:
+              type: number
+              format: double
+              minimum: 0
+              maximum: 100
+            reciprocity:
+              type: number
+              format: double
+              minimum: 0
+              maximum: 100
+            guardian_vouchers:
+              type: number
+              format: double
+              minimum: 0
+              maximum: 100
+            continuity:
+              type: number
+              format: double
+              minimum: 0
+              maximum: 100
+            channel_permission:
+              type: number
+              format: double
+              minimum: 0
+              maximum: 100
+        unstructured_text:
+          type: string
+          description: >
+            Free-text description. AMOS scans for fraud, scandal, social sanction
+            language and converts it into entropy / social drag signals.
+
+    AMOSScoreResponse:
+      type: object
+      description: >
+        Core AMOS scoring response, including residual risk, relational porosity,
+        relational readiness, and credit engine recommendations.
+      properties:
+        RRS_SCORE:
+          type: number
+          format: float
+          description: Raw residual risk score (0–100).
+        RRS_CONFIDENT:
+          type: number
+          format: float
+          description: Confidence-weighted residual risk score.
+        RRS_CONFIDENCE:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Overall confidence in the RRS (0–100).
+        RRS_CONFIDENCE_INTERVAL:
+          type: object
+          description: >
+             Confidence bounds (1-sigma) for the estimated score.
+             
+
+[Image of normal distribution confidence interval]
+
+          properties:
+            lower:
+              type: number
+              format: float
+            upper:
+              type: number
+              format: float
+            error:
+              type: number
+              format: float
+          description: >
+            Approximate confidence interval (RRS_CONFIDENT ± error).
+        Pz_POROSITY:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: Final relational porosity (0–1) after shield and leakage.
+        meta:
+          $ref: "#/components/schemas/AMOSMeta"
+        CREDIT_ENGINE:
+          $ref: "#/components/schemas/CreditEngineBlock"
+        WRAPPER:
+          $ref: "#/components/schemas/WrapperBlock"
+        MODEL_METADATA:
+          $ref: "#/components/schemas/ModelMetadata"
+
+    AMOSMeta:
+      type: object
+      description: Rich metadata about relational physics, MVR, cash, and diagnostics.
+      properties:
+        EXPLANATION:
+          type: object
+          description: Human-readable explanation of porosity and shield effects.
+          properties:
+            porosity:
+              type: string
+            mvr_shield:
+              type: string
+            mvr_shield_factor:
+              type: string
+            final_contained_pd:
+              type: string
+            shield_impact_percentage:
+              type: string
+            headline:
+              type: string
+            risk_narrative:
+              type: string
+        SECTOR:
+          type: string
+        REGION:
+          type: string
+        GRANT_DEPENDENCY:
+          type: number
+          format: float
+        DAYS_SILENT:
+          type: number
+          format: float
+        PD_GHOST:
+          type: number
+          format: float
+        ghosting:
+          type: object
+          properties:
+            flag:
+              type: boolean
+            isDead:
+              type: boolean
+            impact:
+              type: number
+              format: float
+            survival_probability:
+              type: number
+              format: float
+            days_to_ghost:
+              type: number
+              format: float
+            expectedRhythm:
+              type: number
+              format: float
+        HAS_POTEMKIN_RISK:
+          type: boolean
+        POTEMKIN_GAP_BAND:
+          type: string
+          enum: [NONE, LOW, HIGH]
+        MVR_I:
+          type: number
+          format: float
+          description: >
+            Relational readiness index (0–100) – Minimum Viable Relationships Index.
+        MVR_BAND:
+          type: string
+          enum: [EMBEDDED, VIABLE, FRAGILE]
+        MVR_STRONGEST_DIMENSIONS:
+          type: array
+          items:
+            type: string
+        MVR_WEAKEST_DIMENSIONS:
+          type: array
+          items:
+            type: string
+        MVR_RV:
+          type: number
+          format: float
+        MVR_WV:
+          type: number
+          format: float
+        MVR_GD:
+          type: number
+          format: float
+        MVR_EQ:
+          type: number
+          format: float
+        MVR_AS:
+          type: number
+          format: float
+        MVR_RC:
+          type: number
+          format: float
+        COLLECTION_RATE:
+          type: number
+          format: float
+        FX_GAP_RATIO:
+          type: number
+          format: float
+        FX_PD_MULTIPLIER:
+          type: number
+          format: float
+        COLD_CHAIN_LEAKAGE:
+          type: number
+          format: float
+        CORRIDOR_LEAKAGE:
+          type: number
+          format: float
+        PROMO_INCREMENTALITY:
+          type: number
+          format: float
+        PROMO_QUALITY:
+          type: string
+        DAYS_TO_DEATH_CAPPED:
+          type: boolean
+        TIMELINE_SOURCE:
+          type: string
+        TIMELINE_TREND:
+          type: string
+        DATA_COMPLETENESS_SCORE:
+          type: integer
+        MISSING_FIELDS:
+          type: array
+          items:
+            type: string
+        CRITICAL_MISSING_FIELDS:
+          type: array
+          items:
+            type: string
+        MVR_GATE_DECISION:
+          type: string
+          description: >
+            Final operational decision ("APPROVE", "HOLD", "DECLINE") aligned with
+            the credit engine.
+            
+
+[Image of a green traffic light]
+
+        MVR_GATE_REASONS:
+          type: array
+          items:
+            type: string
+        COMPASS_FIT_BAND:
+          type: string
+        COMPASS_MVR_QUADRANT:
+          type: string
+        HEADLINE:
+          type: string
+          description: >
+            Executive headline summarizing RRS, MVR-I, decision, and recommended action.
+        FLAGS:
+          type: array
+          items:
+            type: string
+        NETWORK_HEALTH:
+          type: number
+          format: float
+        CASH_METRICS:
+          type: object
+          properties:
+            cash_runway_days:
+              type: integer
+            runwayState:
+              type: string
+              enum: [CRITICAL, DANGER, WATCH, HEALTHY, STRONG]
+            net_cash:
+              type: number
+              format: float
+            burn_rate_per_day:
+              type: number
+              format: float
+        DIAGNOSTICS:
+          type: object
+          properties:
+            AFI_SCORE:
+              type: number
+              format: float
+            POTEMKIN_RAW_GAP:
+              type: number
+              format: float
+            POTEMKIN_GAP:
+              type: number
+              format: float
+            CANNIBALISATION_RISK:
+              type: number
+              format: float
+            SKU_VOLATILITY_CV:
+              type: number
+              format: float
+            SKU_SAMPLE_SIZE:
+              type: integer
+        SEASONAL_FACTOR:
+          type: number
+          format: float
+          description: >
+             Multiplier derived from monthly seasonal curves for the region.
+             
+
+[Image of linear interpolation graph]
+
+        GRANT_HAIRCUT_APPLIED:
+          type: boolean
+
+    CreditEngineBlock:
+      type: object
+      description: >
+        Credit engine block mapping relational physics into a safe credit limit and
+        operational recommendation.
+      properties:
+        ESTIMATED_SAFE_CREDIT_LIMIT_LOCAL:
+          type: number
+          format: double
+        ESTIMATED_SAFE_CREDIT_LIMIT_USD:
+          type: number
+          format: double
+          nullable: true
+        RECOMMENDED_ACTION:
+          type: string
+          description: >
+            Natural-language recommendation, e.g. "INCREASE to ...", "Reduce to ...",
+            or "Freeze & Recover – CASH CRITICAL (VETO OVERRIDE)".
+        MVR_DECISION:
+          type: string
+          description: >
+            Final decision label from the credit engine ("APPROVE", "HOLD", "DECLINE").
+        SEASONAL_FACTOR:
+          type: number
+          format: float
+        GRANT_HAIRCUT_APPLIED:
+          type: boolean
+        EXPOSURE_TO_REVENUE_RATIO:
+          type: number
+          format: float
+          nullable: true
+        RECOMMENDED_TO_CURRENT_RATIO:
+          type: number
+          format: float
+          nullable: true
+
+    WrapperBlock:
+      type: object
+      properties:
+        version:
+          type: string
+        core_version:
+          type: string
+        request_id:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    ModelMetadata:
+      type: object
+      properties:
+        model_version:
+          type: string
+        core_version:
+          type: string
+        wrapper_version:
+          type: string
+        calibration_date:
+          type: string
+        regulatory_status:
+          type: string
+        physics_framework:
+          type: string
+
+    AMOSErrorResponse:
+      type: object
+      description: Error envelope for validation, data-quality veto, auth, or internal errors.
+      properties:
+        error:
+          type: string
+          description: Short error label (e.g., "Invalid input").
+        details:
+          description: Optional object or array with extra error information.
+        request_id:
+          type: string
+          description: UUID useful for support and tracing.
+
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "OK"
+        version:
+          type: string
+          example: "v9.2.6-GOD-MODE-FINAL"
+        wrapper:
+          type: string
+          example: "v9.2.6-UTILITY-RESTORE"
+        request_id:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+security:
+  - ApiKeyAuth: []
+  - BuyerEmail: []
