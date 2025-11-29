@@ -1,13 +1,57 @@
 openapi: 3.0.3
-info:
-  title: "African Market OS — Minimum Viable Relationships (MVR) API"
-  version: "2.6.0-enterprise"
-  description: |
-    The MVR API measures trust, belonging, permission, and embeddedness to determine
-    relational readiness for ventures and initiatives entering high-context markets.
 
-    This specification describes public endpoints, request/response formats, error
-    contracts, and integration guidance for the MVR API v2.6.0-enterprise.
+info:
+  title: "African Market OS-MVR API"
+  version: "1.0.0"
+  description: |
+    The African Market OS-MVR API exposes AMOS, a relational risk and credit physics
+    engine designed for high-context African markets.
+
+    AMOS-MVR API measures *relational readiness* by combining financial signals with the
+    Minimum Viable Relationships (MVR) framework: trust, belonging, embeddedness,
+    permission, reciprocity, guardian vouchers, and cultural-market fit.
+
+    At its core, the API estimates:
+      - Residual Risk Score (RRS) on a 0–100 scale
+      - Relational readiness (MVR-I) on a 0–100 scale
+      - Relational porosity (Pz) – probability of leakage / default
+      - Cash runway and liquidity state
+      - Safe credit limits in local currency and USD
+
+    The engine is optimized for African trade credit and fintech / FMCG corridors,
+    but can be used in any context where *relational credit*, embeddedness and
+    community guardianship matter as much as pure balance sheet strength.
+
+    Licensing and Access
+    --------------------
+    - This API requires a valid MVR / AMOS license key.
+    - To request access, visit: https://africanmarketos.com/get-access
+    - Plans (indicative):
+        • Standard: 5,000 calls / day, 300 calls / minute
+        • Pro:      50,000 calls / day, 3,000 calls / minute
+        • Enterprise: 500,000+ calls / day, 30,000 calls / minute (negotiated)
+
+    Relational Readiness & MVR
+    --------------------------
+    MVR-I (Minimum Viable Relationships Index) is a composite index across:
+      - Trust and reciprocity (do they pay, and do they reciprocate?)
+      - Embeddedness (are they woven into local routines and ecosystems?)
+      - Guardian vouchers (who will stand in the gap when things go wrong?)
+      - Continuity and relationship longevity
+      - Permission and cultural-market fit (do people want them in their space?)
+
+    AMOS uses these relational signals to build a "relational shield" that partially
+    contains base porosity (raw probability of credit leakage / default), and then
+    overlays FX, cold-chain, and corridor physics.
+
+    Usage Notes
+    -----------
+    - All amounts in the request and response are in *local currency*, unless an
+      explicit USD conversion field is provided.
+    - The canonical scoring endpoint is POST /v1/amos/score.
+    - This OpenAPI spec describes the public surface only. Internal physics and
+      calibration are frozen in the engine binary and not exposed.
+
   termsOfService: https://africanmarketos.com/african-market-os-mvr-framework-commercial-referral-use-policy/
   contact:
     name: African Market OS
@@ -17,687 +61,296 @@ info:
     name: "CC BY 4.0 (Academic/Research Use)"
     url: https://creativecommons.org/licenses/by/4.0/
   x-commercialLicense: https://africanmarketos.com/african-market-os-mvr-framework-commercial-referral-use-policy/
-  x-api-id: mvr-api-v2.6-enterprise
+  x-api-id: "amos-mvr-api-v1"
   x-framework-doi: "10.5281/zenodo.17310446"
   x-author-orcid: "0009-0009-8191-2098"
-  x-performance:
-    typical_latency_ms: 50
-    p95_latency_ms: 150
-    p99_latency_ms: 300
-    cache_ttl: 300
+  x-plan-limits:
+    standard:
+      daily_limit: 5000
+      per_minute_limit: 300
+    pro:
+      daily_limit: 50000
+      per_minute_limit: 3000
+    enterprise:
+      daily_limit: 500000
+      per_minute_limit: 30000
+  x-legal-disclaimer: |
+    Example payloads in this specification are illustrative and may be loosely inspired
+    by public financial data from anonymous "anchor" entities (e.g. large telco, major
+    beverage bottler, regional supermarket). They do NOT constitute credit ratings,
+    investment advice, or formal opinions on any specific named issuer.
+
+    AMOS outputs are sensitive to input assumptions and are provided for informational
+    and operational decision-support only. They are not a substitute for independent
+    credit, legal, or investment judgement.
 
 externalDocs:
-  description: "MVR Framework (DOI)"
+  description: "Minimum Viable Relationships (MVR) Framework (DOI)"
   url: https://doi.org/10.5281/zenodo.17310446
 
 servers:
-  - url: https://africanmarketos.com/v1/
-    description: Production API Gateway (Custom Domain)
+  - url: https://africanmarketos.com
+    description: Production API Gateway
 
 tags:
-  - name: Scores
-    description: Compute MVR Index and dimensional breakdowns
-  - name: Intelligence
-    description: Trends, forecasts, comparisons, benchmarks, insights
+  - name: AMOS-MVR API
+    description: >
+      AMOS-MVR API relational risk scoring and safe credit limit computation. Measures
+      relational readiness (MVR), residual risk, and relational porosity for African
+      trade credit and embedded fintech.
   - name: Utilities
-    description: Health, metadata, session, and auth utilities
+    description: Health and basic metadata / status utilities.
 
 paths:
-  /v1/scores:
-    get:
-      tags: [Scores]
-      operationId: getScores
-      summary: Compute the Minimum Viable Relationship (MVR) Index
-      description: Calculates overall MVR Index and dimensional breakdowns for a given sector.
-      parameters:
-        - name: sector
-          in: query
-          required: false
-          schema:
-            type: string
-            enum: [fmcg, fintech, policy, health, agritech, retail, default]
-          example: fmcg
+  /v1/amos/score:
+    post:
+      tags: [AMOS]
+      operationId: scoreAMOS
+      summary: Compute AMOS relational risk score and safe credit limit
+      description: |
+        Scores an entity using AMOS Relational Porosity v9.x and the Minimum Viable
+        Relationships (MVR) framework to produce:
+
+          - Residual Risk Score (RRS)
+          - Relational porosity (Pz)
+          - MVR-I (relational readiness index)
+          - Cash runway and liquidity state
+          - Estimated safe credit limit (local + USD)
+          - Recommended action (increase, reduce, maintain; freeze & recover)
+
+        The engine is designed to be robust to thin or noisy data. Missing fields
+        impact the DATA_COMPLETENESS_SCORE and may trigger a data-quality veto.
+      security:
+        - ApiKeyAuth: []
+          BuyerEmail: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AMOSScoreRequest"
+            examples:
+              anchor_fintech_telco:
+                summary: EA telco-fintech anchor (illustrative)
+                value:
+                  amos_id: "EA_TELCO_FINTECH_ANCHOR_2023"
+                  name: "Tier-1 EA Telco & Mobile Money Anchor (Illustrative)"
+                  sector: "FINTECH"
+                  region: "EA"
+                  revenue: 307142100000
+                  expenses: 222142100000
+                  cash: 22098100000
+                  total_debt: 120881300000
+                  arrears: 7000000000
+                  revenue_growth: 0.106
+                  days_silent: 1
+                  occupancy_rate: 97
+                  collection_rate: 97
+                  guardian_endorsements: 8
+                  number_of_customers: 46750000
+                  number_of_suppliers: 1000
+                  grant_dependency: 0.0
+                  currency: "KES"
+                  fx_exposed_debt: 40000000000
+                  fx_rate: 130.0
+                  fx_rate_12m_ago: 118.0
+                  forward_cover: 15000000000
+                  outage_hours_per_day: 2
+                  diesel_share_opex: 0.08
+                  current_credit_limit_local: 200000000000
+                  mvr:
+                    mvr_i: 83
+                    embeddedness: 86
+                    trust: 85
+                    reciprocity: 79
+                    guardian_vouchers: 82
+                    continuity: 85
+                    channel_permission: 80
+                  unstructured_text: >
+                    Pan-African telecom and mobile money operator with dominant
+                    market share and strong customer stickiness; highly cash-generative
+                    with no default history.
+              fmcg_beverage_anchor:
+                summary: Africa beverage bottler anchor (illustrative)
+                value:
+                  amos_id: "AFRICA_BEVERAGE_BOTTLER_ANCHOR_2024"
+                  name: "Africa Beverage Bottler Anchor (Illustrative)"
+                  sector: "FMCG_BEVERAGE"
+                  region: "EA"
+                  revenue: 2900000000000
+                  expenses: 2600000000000
+                  cash: 170000000000
+                  total_debt: 640000000000
+                  arrears: 43000000000
+                  revenue_growth: 0.06
+                  days_silent: 2
+                  occupancy_rate: 98
+                  collection_rate: 96
+                  guardian_endorsements: 7
+                  number_of_customers: 10000000
+                  number_of_suppliers: 5000
+                  grant_dependency: 0.0
+                  currency: "KES"
+                  fx_exposed_debt: 256000000000
+                  fx_rate: 150.0
+                  fx_rate_12m_ago: 130.0
+                  forward_cover: 80000000000
+                  outage_hours_per_day: 2
+                  diesel_share_opex: 0.05
+                  current_credit_limit_local: 213000000000
+                  mvr:
+                    mvr_i: 80
+                    embeddedness: 82
+                    trust: 81
+                    reciprocity: 78
+                    guardian_vouchers: 80
+                    continuity: 82
+                    channel_permission: 76
+                  unstructured_text: >
+                    Large Africa beverage bottler; high cooler penetration and strong
+                    modern trade with some traditional trade delays.
       responses:
         "200":
-          description: Successful MVR Index calculation
-          headers:
-            Cache-Control:
-              schema:
-                type: string
-              example: "public, max-age=300, s-maxage=300"
-            X-RateLimit-Limit:
-              $ref: "#/components/headers/X-RateLimit-Limit"
-            X-RateLimit-Remaining:
-              $ref: "#/components/headers/X-RateLimit-Remaining"
-            X-RateLimit-Reset:
-              $ref: "#/components/headers/X-RateLimit-Reset"
+          description: AMOS-MVR relational risk score and credit decision
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ScoreResponse"
+                $ref: "#/components/schemas/AMOSScoreResponse"
               examples:
                 example:
-                  summary: Example MVR score response
+                  summary: Successful AMOS score response (simplified)
                   value:
-                    ok: true
-                    mvr_index: 0.725
-                    confidence: 0.89
-                    sector: "fmcg"
-                    mvr_dimensions:
-                      - name: "Infrastructural Intimacy"
-                        score: 0.74
-                        confidence: 0.8
-                        threshold_ok: true
-                        binding: false
-                        evidence_ptrs: []
-                      - name: "Fractal Trust"
-                        score: 0.61
-                        confidence: 0.77
-                        threshold_ok: false
-                        binding: true
-                        evidence_ptrs: []
-                    mvr_threshold: true
-                    recommendations:
-                      - "Strengthen advocacy and guardian chains in dense micro-communities."
-                    version_info:
-                      api: "2.6.0"
-                      feature: "scores"
-                      model: "calibrated"
-                      mvr_proprietary: true
-                    attribution:
-                      framework: "Minimum Viable Relationships (MVR)"
-                      creator: "Farouk Mark Mukiibi"
-                      source: "African Market OS"
-                      license: "CC BY 4.0 | Commercial Use Licensed"
-                      doi: "10.5281/zenodo.17310446"
+                    RRS_SCORE: 60.6
+                    RRS_CONFIDENT: 60.6
+                    RRS_CONFIDENCE: 100
+                    RRS_CONFIDENCE_INTERVAL:
+                      lower: 58.6
+                      upper: 62.6
+                      error: 2.0
+                    Pz_POROSITY: 0.22
+                    meta:
+                      EXPLANATION:
+                        porosity: "0.22"
+                        mvr_shield: "0.80"
+                        mvr_shield_factor: "0.150"
+                        final_contained_pd: "0.0680"
+                        shield_impact_percentage: "15"
+                        headline: "Base porosity 0.08 with MVR shield 0.80 → 0.0680 PD; FX & logistics leaks → final Pz 0.22"
+                        risk_narrative: "Base porosity before relational shielding is 0.08..."
+                      SECTOR: "FMCG_BEVERAGE"
+                      REGION: "EA"
+                      GRANT_DEPENDENCY: 0
+                      DAYS_SILENT: 2
+                      PD_GHOST: 0
+                      MVR_I: 80
+                      MVR_BAND: "EMBEDDED"
+                      MVR_STRONGEST_DIMENSIONS: ["embeddedness","continuity"]
+                      MVR_WEAKEST_DIMENSIONS: ["channel_permission","cultural_fit"]
+                      COLLECTION_RATE: 96
+                      DATA_COMPLETENESS_SCORE: 100
+                      MVR_GATE_DECISION: "APPROVE"
+                      MVR_GATE_REASONS:
+                        - "INCREASE to 435000000000 – Strategic Champion (6.0× booster – collection 96.0%) [Seas. Adj: 1.00x, Reg: EA]"
+                      HEADLINE: "RRS 60.6 / MVR-I 80 - APPROVE. Action: INCREASE to 435000000000 – Strategic Champion (6.0× booster – collection 96.0%) [Seas. Adj: 1.00x, Reg: EA]"
+                      CASH_METRICS:
+                        cash_runway_days: 24
+                        runwayState: "CRITICAL"
+                        net_cash: -470000000000
+                        burn_rate_per_day: 7123287671.23
+                    CREDIT_ENGINE:
+                      ESTIMATED_SAFE_CREDIT_LIMIT_LOCAL: 435000000000
+                      ESTIMATED_SAFE_CREDIT_LIMIT_USD: 2900000000
+                      RECOMMENDED_ACTION: "INCREASE to 435000000000 – Strategic Champion (6.0× booster – collection 96.0%) [Seas. Adj: 1.00x, Reg: EA]"
+                      MVR_DECISION: "APPROVE"
+                      SEASONAL_FACTOR: 1.0
+                      GRANT_HAIRCUT_APPLIED: false
+                      EXPOSURE_TO_REVENUE_RATIO: 0.0734
+                      RECOMMENDED_TO_CURRENT_RATIO: 2.042
+                    WRAPPER:
+                      version: "v9.2.6-UTILITY-RESTORE"
+                      core_version: "v9.2.6-GOD-MODE-FINAL"
+                      request_id: "example-uuid"
+                      timestamp: "2025-11-29T17:19:36.514Z"
+                    MODEL_METADATA:
+                      model_version: "AMOS-v9.2.6"
+                      core_version: "v9.2.6-GOD-MODE-FINAL"
+                      wrapper_version: "v9.2.6-UTILITY-RESTORE"
+                      calibration_date: "UNSPECIFIED"
+                      regulatory_status: "INTERNAL_USE_ONLY"
+                      physics_framework: "Relational Porosity v9.x"
         "400":
-          $ref: "#/components/responses/BadRequest"
+          description: Validation or data-quality veto
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AMOSErrorResponse"
+              examples:
+                invalid_input:
+                  summary: Invalid or missing core fields
+                  value:
+                    error: "Invalid input"
+                    details:
+                      - field: "revenue"
+                        message: "revenue is required"
+                    request_id: "example-uuid"
+                data_quality_veto:
+                  summary: Data completeness too low
+                  value:
+                    error: "Data Quality Veto: Insufficient Data Completeness"
+                    details:
+                      data_completeness_score: 62
+                      missing_fields: ["sku_sales_history"]
+                      critical_missing_fields: []
+                    request_id: "example-uuid"
         "401":
-          $ref: "#/components/responses/Unauthorized"
-        "429":
-          $ref: "#/components/responses/TooManyRequests"
-
-  /v1/survey-aggregate:
-    post:
-      tags: [Scores]
-      operationId: postSurveyAggregate
-      summary: Aggregate stakeholder feedback into an MVR Index
-      description: >
-        Processes stakeholder responses to calculate a consolidated MVR Index
-        and qualitative insights for a given sector.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - stakeholder_responses
-              properties:
-                stakeholder_responses:
-                  type: array
-                  items:
-                    $ref: "#/components/schemas/StakeholderResponse"
-                  description: Array of stakeholder response objects.
-                sector:
-                  type: string
-                  enum: [fmcg, fintech, policy, health, agritech, retail, default]
-                  description: Sector hint used to adapt weighting.
-      responses:
-        "200":
-          description: Aggregated MVR Index and insights
+          description: Missing or invalid license / buyer email
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SurveyAggregateResponse"
+                $ref: "#/components/schemas/AMOSErrorResponse"
               examples:
-                example:
-                  summary: Survey aggregate example
+                unauthorized:
+                  summary: Missing license key
                   value:
-                    ok: true
-                    sector: "fmcg"
-                    mvr_index: 0.69
-                    matrix_axes:
-                      viability: 0.69
-                      embeddedness: 0.58
-                    insights:
-                      - "embeddedness (routine indispensability): core relationships rely on one champion."
-                    recommendations:
-                      - "Below threshold — build permission via guardian vouchers and micro-community rituals first."
-                    summary: "Promising signal; strengthen advocacy and guardian chains."
-                    version_info:
-                      api: "2.6.0"
-                      method: "survey-aggregate"
-                      mvr_proprietary: true
-                    attribution:
-                      framework: "Minimum Viable Relationships (MVR)"
-                      creator: "Farouk Mark Mukiibi"
-                      source: "African Market OS"
-                      license: "CC BY 4.0 | Commercial Use Licensed"
-                      doi: "10.5281/zenodo.17310446"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-
-  /v1/trends:
-    get:
-      tags: [Intelligence]
-      operationId: getTrends
-      summary: Analyze historical relationship trends
-      description: Returns trend metrics for a given sector over a configurable number of days.
-      parameters:
-        - name: sector
-          in: query
-          required: false
-          schema:
-            type: string
-            enum: [fmcg, fintech, policy, health, agritech, retail, default]
-          example: fmcg
-        - name: days
-          in: query
-          required: false
-          schema:
-            type: integer
-            default: 30
-      responses:
-        "200":
-          description: Trends analysis
-          headers:
-            Cache-Control:
-              schema:
-                type: string
-              example: "public, max-age=300, s-maxage=300"
-            X-RateLimit-Limit:
-              $ref: "#/components/headers/X-RateLimit-Limit"
-            X-RateLimit-Remaining:
-              $ref: "#/components/headers/X-RateLimit-Remaining"
-            X-RateLimit-Reset:
-              $ref: "#/components/headers/X-RateLimit-Reset"
+                    error: "License Required"
+                    request_id: "example-uuid"
+        "500":
+          description: Internal error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TrendsResponse"
+                $ref: "#/components/schemas/AMOSErrorResponse"
               examples:
-                example:
-                  summary: Trend response example
+                internal:
+                  summary: Generic internal error
                   value:
-                    ok: true
-                    sector: "fmcg"
-                    days: 14
-                    average_index: 0.67
-                    slope: 0.004
-                    interpretation: "Upward trend — advocacy expanding."
-                    version_info:
-                      api: "2.6.0"
-                      feature: "trends"
-                    attribution:
-                      framework: "Minimum Viable Relationships (MVR)"
-                      creator: "Farouk Mark Mukiibi"
-                      source: "African Market OS"
-                      license: "CC BY 4.0 | Commercial Use Licensed"
-                      doi: "10.5281/zenodo.17310446"
+                    error: "Internal error"
+                    request_id: "example-uuid"
 
-  /v1/forecast:
-    post:
-      tags: [Intelligence]
-      operationId: postForecast
-      summary: Forecast future relationship dynamics
-      description: >
-        Predicts future MVR index values using current index and velocity.
-        Index is expressed in the 0–1 range.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - current_index
-                - velocity
-              properties:
-                current_index:
-                  type: number
-                  format: float
-                  minimum: 0
-                  maximum: 1
-                  example: 0.68
-                velocity:
-                  type: number
-                  format: float
-                  example: 0.02
-                horizon:
-                  type: integer
-                  default: 30
-                  description: Forecast horizon in days.
-      responses:
-        "200":
-          description: Forecast report
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ForecastResponse"
-              examples:
-                example:
-                  summary: Forecast example
-                  value:
-                    ok: true
-                    current_index: 0.68
-                    projected_index: 0.74
-                    horizon_days: 90
-                    confidence: 0.82
-                    pmf_projection: "High-growth trajectory — viable for expansion."
-                    version_info:
-                      api: "2.6.0"
-                      feature: "forecast"
-                    attribution:
-                      framework: "Minimum Viable Relationships (MVR)"
-                      creator: "Farouk Mark Mukiibi"
-                      source: "African Market OS"
-                      license: "CC BY 4.0 | Commercial Use Licensed"
-                      doi: "10.5281/zenodo.17310446"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-
-  /v1/compare:
-    post:
-      tags: [Intelligence]
-      operationId: postCompare
-      summary: Compare MVR indices of two entities
-      description: Compares readiness between two entities based on their MVR indices.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - a_index
-                - b_index
-              properties:
-                a_index:
-                  type: number
-                  format: float
-                  minimum: 0
-                  maximum: 1
-                b_index:
-                  type: number
-                  format: float
-                  minimum: 0
-                  maximum: 1
-      responses:
-        "200":
-          description: Comparison result
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CompareResponse"
-              examples:
-                example:
-                  summary: Compare example
-                  value:
-                    ok: true
-                    delta: 0.07
-                    verdict: "Entity B shows stronger embeddedness."
-                    policy_trace:
-                      priors: "compare-pair baseline"
-                    version_info:
-                      api: "2.6.0"
-                      feature: "compare"
-                    attribution:
-                      framework: "Minimum Viable Relationships (MVR)"
-                      creator: "Farouk Mark Mukiibi"
-                      source: "African Market OS"
-                      license: "CC BY 4.0 | Commercial Use Licensed"
-                      doi: "10.5281/zenodo.17310446"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-
-  /v1/benchmark:
-    get:
-      tags: [Intelligence]
-      operationId: getBenchmark
-      summary: Benchmark MVR index against sector baselines
-      description: Returns benchmark values (average, quartiles, sample size) for a sector.
-      parameters:
-        - name: sector
-          in: query
-          required: false
-          schema:
-            type: string
-            enum: [fmcg, fintech, policy, health, agritech, retail, default]
-          example: fmcg
-      responses:
-        "200":
-          description: Benchmark response
-          headers:
-            Cache-Control:
-              schema:
-                type: string
-              example: "public, max-age=300, s-maxage=300"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BenchmarkResponse"
-              examples:
-                example:
-                  summary: Benchmark example
-                  value:
-                    ok: true
-                    sector: "fmcg"
-                    benchmark:
-                      average: 0.65
-                      top_quartile: 0.78
-                      bottom_quartile: 0.52
-                      sample_size: 450
-                    version_info:
-                      api: "2.6.0"
-                      feature: "benchmark"
-                    attribution:
-                      framework: "Minimum Viable Relationships (MVR)"
-                      creator: "Farouk Mark Mukiibi"
-                      source: "African Market OS"
-                      license: "CC BY 4.0 | Commercial Use Licensed"
-                      doi: "10.5281/zenodo.17310446"
-
-  /v1/insights:
-    get:
-      tags: [Intelligence]
-      operationId: getInsights
-      summary: Retrieve structured insights for a sector
-      description: Returns ranked entities or clusters with associated MVR scores and captions.
-      parameters:
-        - name: sector
-          in: query
-          required: false
-          schema:
-            type: string
-            enum: [fmcg, fintech, policy, health, agritech, retail, default]
-          example: fmcg
-      responses:
-        "200":
-          description: Insights payload
-          headers:
-            Cache-Control:
-              schema:
-                type: string
-              example: "public, max-age=300, s-maxage=300"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/InsightsResponse"
-              examples:
-                example:
-                  summary: Insights example
-                  value:
-                    ok: true
-                    sector: "fmcg"
-                    top_entities:
-                      - rank: 1
-                        sector: "fmcg"
-                        mvr_index: 0.74
-                        caption: "High-trust cluster — scalable."
-                      - rank: 2
-                        sector: "fmcg"
-                        mvr_index: 0.66
-                        caption: "Low-trust cohort — requires guardian boost."
-                    version_info:
-                      api: "2.6.0"
-                      feature: "insights"
-                    attribution:
-                      framework: "Minimum Viable Relationships (MVR)"
-                      creator: "Farouk Mark Mukiibi"
-                      source: "African Market OS"
-                      license: "CC BY 4.0 | Commercial Use Licensed"
-                      doi: "10.5281/zenodo.17310446"
-
-  /v1/temperature:
-    get:
-      tags: [Intelligence]
-      operationId: getTemperature
-      summary: Get continental relationship temperature
-      description: Returns a high-level "temperature" view of relational dynamics.
-      responses:
-        "200":
-          description: Temperature data
-          headers:
-            Cache-Control:
-              schema:
-                type: string
-              example: "public, max-age=300, s-maxage=300"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TemperatureResponse"
-              examples:
-                example:
-                  summary: Continental temperature example
-                  value:
-                    ok: true
-                    date: "2025-11-13"
-                    continent_score: 0.71
-                    hottest_sector: "fintech"
-                    coolest_sector: "policy"
-                    region: "EA"
-                    sample_size: 1500
-                    version_info:
-                      api: "2.6.0"
-                      feature: "temperature"
-                    attribution:
-                      framework: "Minimum Viable Relationships (MVR)"
-                      creator: "Farouk Mark Mukiibi"
-                      source: "African Market OS"
-                      license: "CC BY 4.0 | Commercial Use Licensed"
-                      doi: "10.5281/zenodo.17310446"
-
-  /v1/policy_multi:
-    get:
-      tags: [Intelligence]
-      operationId: getPolicyMulti
-      summary: Policy multi-document analysis (summary)
-      description: Returns multi-policy audit summary for current context.
-      responses:
-        "200":
-          description: Policy multi-audit result
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/PolicyAuditResponse"
-    post:
-      tags: [Intelligence]
-      operationId: postPolicyMulti
-      summary: Policy multi-document analysis
-      description: Runs policy multi-audit and returns aggregate compliance insights.
-      responses:
-        "200":
-          description: Policy multi-audit result
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/PolicyAuditResponse"
-              examples:
-                example:
-                  summary: Policy audit example
-                  value:
-                    ok: true
-                    policies_analyzed: 5
-                    compliance_score: 0.88
-                    recommendations:
-                      - "All policies compliant with current regulations"
-                    version_info:
-                      api: "2.6.0"
-                      feature: "policy_multi"
-                    attribution:
-                      framework: "Minimum Viable Relationships (MVR)"
-                      creator: "Farouk Mark Mukiibi"
-                      source: "African Market OS"
-                      license: "CC BY 4.0 | Commercial Use Licensed"
-                      doi: "10.5281/zenodo.17310446"
-
-  /v1/story:
-    get:
-      tags: [Intelligence]
-      operationId: getStory
-      summary: Generate narrative from MVR data
-      description: Returns a narrative story derived from MVR metrics and trends.
-      responses:
-        "200":
-          description: Story generated
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/StoryResponse"
-    post:
-      tags: [Intelligence]
-      operationId: postStory
-      summary: Generate custom story with input data
-      description: Returns a narrative story based on contextual data.
-      responses:
-        "200":
-          description: Story generated
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/StoryResponse"
-              examples:
-                example:
-                  summary: Story example
-                  value:
-                    ok: true
-                    story: "Enterprise MVR implementation driving 45% growth in stakeholder trust."
-                    impact_metrics:
-                      trust_growth: 0.45
-                      relationship_longevity: 0.32
-                    version_info:
-                      api: "2.6.0"
-                      feature: "story"
-                    attribution:
-                      framework: "Minimum Viable Relationships (MVR)"
-                      creator: "Farouk Mark Mukiibi"
-                      source: "African Market OS"
-                      license: "CC BY 4.0 | Commercial Use Licensed"
-                      doi: "10.5281/zenodo.17310446"
-
-  /v1/meta:
-    get:
-      tags: [Utilities]
-      operationId: getMeta
-      summary: API metadata and endpoints list
-      description: Returns metadata including available endpoints, limits, and model fingerprint.
-      responses:
-        "200":
-          description: API metadata
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/MetaResponse"
-
-  /v1/usage:
-    get:
-      tags: [Utilities]
-      operationId: getUsage
-      summary: Get current API usage for the license key
-      description: Returns usage count and plan limits for the authenticated key.
-      responses:
-        "200":
-          description: Usage information
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UsageResponse"
-              examples:
-                example:
-                  summary: Usage example
-                  value:
-                    ok: true
-                    plan: "pro"
-                    date: "2025-11-13"
-                    used_today: 1250
-                    daily_limit: 50000
-                    attribution:
-                      framework: "Minimum Viable Relationships (MVR)"
-                      creator: "Farouk Mark Mukiibi"
-                      source: "African Market OS"
-                      license: "CC BY 4.0 | Commercial Use Licensed"
-                      doi: "10.5281/zenodo.17310446"
-
-  /v1/whoami:
-    get:
-      tags: [Utilities]
-      operationId: getWhoami
-      summary: API information
-      description: Returns basic information about the API, capabilities, and region.
-      responses:
-        "200":
-          description: API information
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/WhoAmIResponse"
-
-  /v1/docs:
-    get:
-      tags: [Utilities]
-      operationId: getDocs
-      summary: API documentation overview
-      description: Returns a short documentation message and a subset of key endpoints.
-      responses:
-        "200":
-          description: Documentation links
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/DocsResponse"
-
-  /v1/session/new:
-    post:
-      tags: [Utilities]
-      operationId: postSessionNew
-      summary: Create a new API session (short-lived)
-      description: >
-        Exchanges a license and email for a short-lived session token, useful where
-        header-based license authentication is constrained.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - license
-                - email
-              properties:
-                license:
-                  type: string
-                email:
-                  type: string
-                  format: email
-      responses:
-        "200":
-          description: Session token created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SessionResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-
-  /v1/health:
+  /health:
     get:
       tags: [Utilities]
       operationId: getHealth
-      summary: API Health Check
-      description: Instant health probe with core service metadata.
+      summary: Health check and basic engine metadata
+      description: >
+        Lightweight health probe. Returns engine version and wrapper version. This
+        endpoint does not require authentication.
       responses:
         "200":
           description: Health status
-          headers:
-            Cache-Control:
-              schema:
-                type: string
-              example: "public, max-age=300, s-maxage=300"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthResponse"
+              examples:
+                example:
+                  summary: Health response example
+                  value:
+                    status: "OK"
+                    version: "v9.2.6-GOD-MODE-FINAL"
+                    wrapper: "v9.2.6-UTILITY-RESTORE"
+                    request_id: "example-uuid"
+                    timestamp: "2025-11-29T17:19:36.514Z"
 
 components:
   securitySchemes:
@@ -705,591 +358,690 @@ components:
       type: apiKey
       in: header
       name: x-mvr-license
-      description: License key used for authenticated access.
+      description: |
+        MVR / AMOS license key used for authenticated access.
+
+        To request a license, visit:
+        https://africanmarketos.com/get-access
     BuyerEmail:
       type: apiKey
       in: header
       name: x-buyer-email
-      description: Email associated with the license key.
-    SessionAuth:
-      type: apiKey
-      in: header
-      name: x-mvr-session
-      description: Short-lived session token created via /v1/session/new.
-
-  headers:
-    X-RateLimit-Limit:
-      description: Request limit per window for the current plan.
-      schema:
-        type: integer
-        example: 5000
-    X-RateLimit-Remaining:
-      description: Remaining requests in the current window.
-      schema:
-        type: integer
-        example: 4998
-    X-RateLimit-Reset:
-      description: UTC epoch seconds when the rate limit resets.
-      schema:
-        type: integer
-        example: 1700000000
-
-  responses:
-    BadRequest:
-      description: Invalid request or validation error
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ErrorResponse"
-          examples:
-            invalid_payload:
-              summary: Invalid request body
-              value:
-                ok: false
-                error: "Missing current_index or velocity"
-                error_code: "MISSING_FORECAST_PARAMS"
-                message: "Example: {current_index: 0.65, velocity: 0.02, horizon: 30}"
-                attribution:
-                  framework: "Minimum Viable Relationships (MVR)"
-                  creator: "Farouk Mark Mukiibi"
-                  source: "African Market OS"
-                  license: "CC BY 4.0 | Commercial Use Licensed"
-                  doi: "10.5281/zenodo.17310446"
-    Unauthorized:
-      description: Unauthorized - missing or invalid credentials
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ErrorResponse"
-          examples:
-            invalid_license:
-              summary: Invalid license
-              value:
-                ok: false
-                error: "Invalid license key"
-                error_code: "INVALID_LICENSE"
-                message: "License key not found or expired"
-                attribution:
-                  framework: "Minimum Viable Relationships (MVR)"
-                  creator: "Farouk Mark Mukiibi"
-                  source: "African Market OS"
-                  license: "CC BY 4.0 | Commercial Use Licensed"
-                  doi: "10.5281/zenodo.17310446"
-    TooManyRequests:
-      description: Rate limit exceeded
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ErrorResponse"
-          examples:
-            rate_limited:
-              summary: Rate limit exceeded
-              value:
-                ok: false
-                error: "Rate limit exceeded"
-                error_code: "RATE_LIMIT_EXCEEDED"
-                limit: 5000
-                window: "60 seconds"
-                retry_after: 60
-                attribution:
-                  framework: "Minimum Viable Relationships (MVR)"
-                  creator: "Farouk Mark Mukiibi"
-                  source: "African Market OS"
-                  license: "CC BY 4.0 | Commercial Use Licensed"
-                  doi: "10.5281/zenodo.17310446"
+      description: Email associated with the license key (for governance and audit).
 
   schemas:
-    VersionInfo:
+    AMOSScoreRequest:
       type: object
-      description: Generic version metadata attached to responses.
+      required:
+        - amos_id
+        - sector
+        - region
+        - revenue
+        - cash
+        - days_silent
+        - occupancy_rate
+        - collection_rate
       properties:
-        api:
+        amos_id:
           type: string
-          example: "2.6.0"
-        feature:
+          description: Stable identifier for this entity within your systems.
+        id:
           type: string
-          description: Feature or mode identifier.
-        method:
+          description: Optional legacy ID (alias for amos_id).
+        name:
           type: string
-          description: Method or pathway label.
-        model:
+          description: Human-readable name of the entity.
+        legal_name:
           type: string
-          description: Model or configuration identifier.
-        mvr_proprietary:
-          type: boolean
-          example: true
-
-    AttributionObject:
-      type: object
-      description: Attribution metadata for the MVR framework.
-      properties:
-        framework:
-          type: string
-          example: "Minimum Viable Relationships (MVR)"
-        creator:
-          type: string
-          example: "Farouk Mark Mukiibi"
-        source:
-          type: string
-          example: "African Market OS"
-        license:
-          type: string
-          example: "CC BY 4.0 | Commercial Use Licensed"
-        doi:
-          type: string
-          example: "10.5281/zenodo.17310446"
-
-    ErrorResponse:
-      type: object
-      properties:
-        ok:
-          type: boolean
-          example: false
-        error:
-          type: string
-          description: Short error label.
-        error_code:
-          type: string
-          description: Machine-friendly error code.
-        message:
-          type: string
-          description: Human-readable explanation of the error.
-        request_id:
-          type: string
-          description: Unique error reference for support.
-        limit:
-          type: integer
-          description: Optional rate limit value when relevant.
-        window:
-          type: string
-          description: Optional rate window description.
-        retry_after:
-          type: integer
-          description: Optional retry-after hint in seconds.
-        attribution:
-          $ref: "#/components/schemas/AttributionObject"
-
-    StakeholderResponse:
-      type: object
-      properties:
-        dimension:
-          type: string
-          description: Name of the dimension or signal (e.g., Embeddedness).
-        scale:
-          type: integer
-          minimum: 1
-          maximum: 5
-          description: Ordinal score for this dimension.
-        reasons:
-          type: array
-          items:
-            type: string
-          description: Free-text explanations from stakeholders.
-
-    ScoreResponse:
-      type: object
-      properties:
-        ok:
-          type: boolean
-        mvr_index:
-          type: number
-          format: float
-          minimum: 0
-          maximum: 1
-          example: 0.725
-          description: Overall MVR score (0–1).
-        confidence:
-          type: number
-          format: float
-          minimum: 0
-          maximum: 1
-          example: 0.89
+          description: Legal registered name (if different from name).
         sector:
           type: string
-          example: "fmcg"
-        mvr_dimensions:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-              score:
-                type: number
-                minimum: 0
-                maximum: 1
-              confidence:
-                type: number
-                minimum: 0
-                maximum: 1
-              threshold_ok:
-                type: boolean
-              binding:
-                type: boolean
-              evidence_ptrs:
-                type: array
-                items:
-                  type: string
-        mvr_threshold:
-          type: boolean
-          description: True if mvr_index >= 0.68.
-        recommendations:
-          type: array
-          items:
-            type: string
-        version_info:
-          $ref: "#/components/schemas/VersionInfo"
-        attribution:
-          $ref: "#/components/schemas/AttributionObject"
-
-    SurveyAggregateResponse:
-      type: object
-      properties:
-        ok:
-          type: boolean
-        sector:
+          description: >
+            Sector tag used to select physics and rhythms. Case-insensitive; will be
+            normalized to upper-case. Examples: FINTECH, FMCG_BEVERAGE, FMCG_RETAIL,
+            FMCG_PERSONAL_CARE, GENERIC.
+          enum:
+            - GENERIC
+            - FINTECH
+            - FMCG_RETAIL
+            - FMCG_BEVERAGE
+            - FMCG_OILS
+            - FMCG_DAIRY
+            - FMCG_PERSONAL_CARE
+            - FMCG_FOODS
+            - FMCG_ALCOHOL
+        region:
           type: string
-        mvr_index:
+          description: >
+            Region code used for seasonal pressure (EA, WA, ZA, GENERIC, etc.).
+            Case-insensitive; will be normalized to upper-case.
+          example: "EA"
+        revenue:
           type: number
-          format: float
+          format: double
+          minimum: 0
+          description: >
+            Annual revenue in local currency. Must use the same currency as
+            current_credit_limit_local for comparisons.
+        total_revenue:
+          type: number
+          format: double
+          minimum: 0
+          description: Optional alias for revenue.
+        expenses:
+          type: number
+          format: double
+          minimum: 0
+          description: >
+            Annual operating expenses / COGS in local currency, used for burn-rate
+            and cash runway computation.
+        opex:
+          type: number
+          format: double
+          minimum: 0
+          description: Optional alias for expenses.
+        cash:
+          type: number
+          format: double
+          minimum: 0
+          description: >
+            Cash and cash-equivalents in local currency. Core input for liquidity
+            and cash runway, i.e. days to death.
+        cash_balance:
+          type: number
+          format: double
+          minimum: 0
+          description: Optional alias for cash.
+        total_debt:
+          type: number
+          format: double
+          minimum: 0
+          description: >
+            Total interest-bearing debt in local currency. Used in leverage and
+            net cash calculations.
+        debt_total:
+          type: number
+          format: double
+          minimum: 0
+          description: Optional alias for total_debt.
+        arrears:
+          type: number
+          format: double
+          minimum: 0
+          description: >
+            Overdue receivables / arrears in local currency. Drives base porosity
+            and AFI_SCORE.
+        overdue:
+          type: number
+          format: double
+          minimum: 0
+          description: Optional alias for arrears.
+        revenue_growth:
+          type: number
+          format: double
+          description: Annual revenue growth rate (e.g., 0.10 for +10% YoY).
+        days_silent:
+          type: number
+          format: double
+          minimum: 0
+          description: >
+            Days since last observed activity. Core input for ghosting risk and
+            activity rhythm.
+          x-concept-visualization: >
+             High days_silent values trigger exponential decay in trust scores.
+             
+
+[Image of exponential decay graph]
+
+        days_since_last_activity:
+          type: number
+          format: double
+          minimum: 0
+          description: Optional alias for days_silent.
+        days_since_last_scan:
+          type: number
+          format: double
+          minimum: 0
+          description: Optional alias for days_silent.
+        occupancy_rate:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: >
+            Utilization / occupancy as a percentage (0–100). Used as a proxy for
+            demand and capacity usage.
+        collection_rate:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: >
+            Collection rate as a percentage (0–100). Central signal for trust and
+            repayment behavior.
+        guardian_endorsements:
+          type: number
+          format: double
+          minimum: 0
+          description: >
+            Number of credible guardians / endorsers willing to vouch. Drives
+            guardian vouchers and relational shield.
+        number_of_customers:
+          type: number
+          format: double
+          minimum: 0
+          description: Approximate number of active customers.
+        number_of_suppliers:
+          type: number
+          format: double
+          minimum: 0
+          description: Approximate number of active suppliers.
+        grant_dependency:
+          type: number
+          format: double
           minimum: 0
           maximum: 1
-        matrix_axes:
+          description: >
+            Fraction of revenue that is grant/donor funded (0–1). Above 0.5, a
+            grant haircut is applied to effective revenue.
+        active_users:
+          type: number
+          format: double
+          minimum: 0
+          description: Optional active user count (defaults to number_of_customers).
+        active_customers:
+          type: number
+          format: double
+          minimum: 0
+          description: Optional alias for active_users.
+        sku_sales_8w:
+          type: array
+          items:
+            type: number
+            format: double
+            minimum: 0
+          description: >
+            Optional SKU-level sales volumes for up to 8 weeks. Used for volatility
+            and promo cannibalisation analysis.
+        promo_units:
+          type: number
+          format: double
+          minimum: 0
+          description: Units sold on promotion in the analysis window.
+        baseline_units:
+          type: number
+          format: double
+          minimum: 0
+          description: Units sold off-promo in the analysis window.
+        currency:
+          type: string
+          description: ISO or local currency code (e.g. KES, ZAR, GHS, EUR).
+        fx_rate:
+          type: number
+          format: double
+          minimum: 0
+          description: >
+            FX rate (local per USD) at scoring date. Used to compute USD safe limit
+            and FX slope when fx_exposed_debt is present.
+        fx_rate_12m_ago:
+          type: number
+          format: double
+          minimum: 0
+          description: FX rate (local per USD) 12 months ago.
+        forward_cover:
+          type: number
+          format: double
+          minimum: 0
+          description: Nominal size of FX forward / hedge cover in local currency.
+        fx_exposed_debt:
+          type: number
+          format: double
+          minimum: 0
+          description: Portion of debt exposed to FX risk in local currency.
+        outage_hours_per_day:
+          type: number
+          format: double
+          minimum: 0
+          description: Average daily power outage hours; used in cold-chain leakage.
+        diesel_share_opex:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: >
+            Share of operating expenses spent on diesel (0–1). High values amplify
+            cold-chain risk.
+        corridor_id:
+          type: string
+          description: Optional corridor identifier for logistics analysis.
+        port_dwell_days:
+          type: number
+          format: double
+          minimum: 0
+          description: Port dwell days; drives corridor leakage.
+        truck_turnaround_days:
+          type: number
+          format: double
+          minimum: 0
+          description: Optional trucking turnaround time.
+        current_credit_limit_local:
+          type: number
+          format: double
+          minimum: 0
+          description: >
+            Current credit limit in local currency. Used to compute recommended
+            action (increase, reduce, maintain).
+        prev_ghosting:
+          type: number
+          format: double
+          description: Optional override / prior for ghosting status.
+        mvr:
           type: object
+          description: >
+            Optional explicit MVR relational scores. If omitted, AMOS infers MVR-I
+            and dimensions from financial and activity signals.
           properties:
-            viability:
+            mvr_i:
               type: number
-              format: float
+              format: double
+              minimum: 0
+              maximum: 100
+              description: >
+                Minimum Viable Relationships Index (0–100) – relational readiness
+                across trust, belonging, embeddedness, permission, and cultural-market fit.
             embeddedness:
               type: number
-              format: float
-        insights:
-          type: array
-          items:
-            type: string
-        recommendations:
-          type: array
-          items:
-            type: string
-        summary:
+              format: double
+              minimum: 0
+              maximum: 100
+            trust:
+              type: number
+              format: double
+              minimum: 0
+              maximum: 100
+            cultural_fit:
+              type: number
+              format: double
+              minimum: 0
+              maximum: 100
+            reciprocity:
+              type: number
+              format: double
+              minimum: 0
+              maximum: 100
+            guardian_vouchers:
+              type: number
+              format: double
+              minimum: 0
+              maximum: 100
+            continuity:
+              type: number
+              format: double
+              minimum: 0
+              maximum: 100
+            channel_permission:
+              type: number
+              format: double
+              minimum: 0
+              maximum: 100
+        unstructured_text:
           type: string
-        version_info:
-          $ref: "#/components/schemas/VersionInfo"
-        attribution:
-          $ref: "#/components/schemas/AttributionObject"
+          description: >
+            Free-text description. AMOS scans for fraud, scandal, social sanction
+            language and converts it into entropy / social drag signals.
 
-    TrendsResponse:
+    AMOSScoreResponse:
       type: object
+      description: >
+        Core AMOS scoring response, including residual risk, relational porosity,
+        relational readiness, and credit engine recommendations.
       properties:
-        ok:
-          type: boolean
-        sector:
-          type: string
-        days:
+        RRS_SCORE:
+          type: number
+          format: float
+          description: Raw residual risk score (0–100).
+        RRS_CONFIDENT:
+          type: number
+          format: float
+          description: Confidence-weighted residual risk score.
+        RRS_CONFIDENCE:
           type: integer
-        average_index:
-          type: number
-          format: float
-        slope:
-          type: number
-          format: float
-        interpretation:
-          type: string
-        version_info:
-          $ref: "#/components/schemas/VersionInfo"
-        attribution:
-          $ref: "#/components/schemas/AttributionObject"
+          minimum: 0
+          maximum: 100
+          description: Overall confidence in the RRS (0–100).
+        RRS_CONFIDENCE_INTERVAL:
+          type: object
+          description: >
+             Confidence bounds (1-sigma) for the estimated score.
+             
 
-    ForecastResponse:
-      type: object
-      properties:
-        ok:
-          type: boolean
-        current_index:
+[Image of normal distribution confidence interval]
+
+          properties:
+            lower:
+              type: number
+              format: float
+            upper:
+              type: number
+              format: float
+            error:
+              type: number
+              format: float
+          description: >
+            Approximate confidence interval (RRS_CONFIDENT ± error).
+        Pz_POROSITY:
           type: number
           format: float
           minimum: 0
           maximum: 1
-        projected_index:
-          type: number
-          format: float
-          minimum: 0
-          maximum: 1
-        horizon_days:
-          type: integer
-        confidence:
-          type: number
-          format: float
-        pmf_projection:
-          type: string
-        version_info:
-          $ref: "#/components/schemas/VersionInfo"
-        attribution:
-          $ref: "#/components/schemas/AttributionObject"
+          description: Final relational porosity (0–1) after shield and leakage.
+        meta:
+          $ref: "#/components/schemas/AMOSMeta"
+        CREDIT_ENGINE:
+          $ref: "#/components/schemas/CreditEngineBlock"
+        WRAPPER:
+          $ref: "#/components/schemas/WrapperBlock"
+        MODEL_METADATA:
+          $ref: "#/components/schemas/ModelMetadata"
 
-    CompareResponse:
+    AMOSMeta:
       type: object
+      description: Rich metadata about relational physics, MVR, cash, and diagnostics.
       properties:
-        ok:
-          type: boolean
-        delta:
-          type: number
-          format: float
-        verdict:
-          type: string
-        policy_trace:
+        EXPLANATION:
           type: object
-        version_info:
-          $ref: "#/components/schemas/VersionInfo"
-        attribution:
-          $ref: "#/components/schemas/AttributionObject"
-
-    BenchmarkResponse:
-      type: object
-      properties:
-        ok:
-          type: boolean
-        sector:
+          description: Human-readable explanation of porosity and shield effects.
+          properties:
+            porosity:
+              type: string
+            mvr_shield:
+              type: string
+            mvr_shield_factor:
+              type: string
+            final_contained_pd:
+              type: string
+            shield_impact_percentage:
+              type: string
+            headline:
+              type: string
+            risk_narrative:
+              type: string
+        SECTOR:
           type: string
-        benchmark:
+        REGION:
+          type: string
+        GRANT_DEPENDENCY:
+          type: number
+          format: float
+        DAYS_SILENT:
+          type: number
+          format: float
+        PD_GHOST:
+          type: number
+          format: float
+        ghosting:
           type: object
           properties:
-            average:
+            flag:
+              type: boolean
+            isDead:
+              type: boolean
+            impact:
               type: number
               format: float
-            top_quartile:
+            survival_probability:
               type: number
               format: float
-            bottom_quartile:
+            days_to_ghost:
               type: number
               format: float
-            sample_size:
-              type: integer
-        version_info:
-          $ref: "#/components/schemas/VersionInfo"
-        attribution:
-          $ref: "#/components/schemas/AttributionObject"
-
-    InsightsResponse:
-      type: object
-      properties:
-        ok:
+            expectedRhythm:
+              type: number
+              format: float
+        HAS_POTEMKIN_RISK:
           type: boolean
-        sector:
+        POTEMKIN_GAP_BAND:
           type: string
-        top_entities:
-          type: array
-          items:
-            type: object
-            properties:
-              rank:
-                type: integer
-              sector:
-                type: string
-              mvr_index:
-                type: number
-                format: float
-              caption:
-                type: string
-        version_info:
-          $ref: "#/components/schemas/VersionInfo"
-        attribution:
-          $ref: "#/components/schemas/AttributionObject"
-
-    TemperatureResponse:
-      type: object
-      properties:
-        ok:
-          type: boolean
-        date:
-          type: string
-        continent_score:
+          enum: [NONE, LOW, HIGH]
+        MVR_I:
           type: number
           format: float
-        hottest_sector:
+          description: >
+            Relational readiness index (0–100) – Minimum Viable Relationships Index.
+        MVR_BAND:
           type: string
-        coolest_sector:
-          type: string
-        region:
-          type: string
-        sample_size:
-          type: integer
-        version_info:
-          $ref: "#/components/schemas/VersionInfo"
-        attribution:
-          $ref: "#/components/schemas/AttributionObject"
-
-    PolicyAuditResponse:
-      type: object
-      properties:
-        ok:
-          type: boolean
-        policies_analyzed:
-          type: integer
-        compliance_score:
-          type: number
-          format: float
-        recommendations:
+          enum: [EMBEDDED, VIABLE, FRAGILE]
+        MVR_STRONGEST_DIMENSIONS:
           type: array
           items:
             type: string
-        version_info:
-          $ref: "#/components/schemas/VersionInfo"
-        attribution:
-          $ref: "#/components/schemas/AttributionObject"
-
-    StoryResponse:
-      type: object
-      properties:
-        ok:
-          type: boolean
-        story:
+        MVR_WEAKEST_DIMENSIONS:
+          type: array
+          items:
+            type: string
+        MVR_RV:
+          type: number
+          format: float
+        MVR_WV:
+          type: number
+          format: float
+        MVR_GD:
+          type: number
+          format: float
+        MVR_EQ:
+          type: number
+          format: float
+        MVR_AS:
+          type: number
+          format: float
+        MVR_RC:
+          type: number
+          format: float
+        COLLECTION_RATE:
+          type: number
+          format: float
+        FX_GAP_RATIO:
+          type: number
+          format: float
+        FX_PD_MULTIPLIER:
+          type: number
+          format: float
+        COLD_CHAIN_LEAKAGE:
+          type: number
+          format: float
+        CORRIDOR_LEAKAGE:
+          type: number
+          format: float
+        PROMO_INCREMENTALITY:
+          type: number
+          format: float
+        PROMO_QUALITY:
           type: string
-        impact_metrics:
+        DAYS_TO_DEATH_CAPPED:
+          type: boolean
+        TIMELINE_SOURCE:
+          type: string
+        TIMELINE_TREND:
+          type: string
+        DATA_COMPLETENESS_SCORE:
+          type: integer
+        MISSING_FIELDS:
+          type: array
+          items:
+            type: string
+        CRITICAL_MISSING_FIELDS:
+          type: array
+          items:
+            type: string
+        MVR_GATE_DECISION:
+          type: string
+          description: >
+            Final operational decision ("APPROVE", "HOLD", "DECLINE") aligned with
+            the credit engine.
+            
+
+[Image of a green traffic light]
+
+        MVR_GATE_REASONS:
+          type: array
+          items:
+            type: string
+        COMPASS_FIT_BAND:
+          type: string
+        COMPASS_MVR_QUADRANT:
+          type: string
+        HEADLINE:
+          type: string
+          description: >
+            Executive headline summarizing RRS, MVR-I, decision, and recommended action.
+        FLAGS:
+          type: array
+          items:
+            type: string
+        NETWORK_HEALTH:
+          type: number
+          format: float
+        CASH_METRICS:
           type: object
           properties:
-            trust_growth:
+            cash_runway_days:
+              type: integer
+            runwayState:
+              type: string
+              enum: [CRITICAL, DANGER, WATCH, HEALTHY, STRONG]
+            net_cash:
               type: number
               format: float
-            relationship_longevity:
+            burn_rate_per_day:
               type: number
               format: float
-        version_info:
-          $ref: "#/components/schemas/VersionInfo"
-        attribution:
-          $ref: "#/components/schemas/AttributionObject"
+        DIAGNOSTICS:
+          type: object
+          properties:
+            AFI_SCORE:
+              type: number
+              format: float
+            POTEMKIN_RAW_GAP:
+              type: number
+              format: float
+            POTEMKIN_GAP:
+              type: number
+              format: float
+            CANNIBALISATION_RISK:
+              type: number
+              format: float
+            SKU_VOLATILITY_CV:
+              type: number
+              format: float
+            SKU_SAMPLE_SIZE:
+              type: integer
+        SEASONAL_FACTOR:
+          type: number
+          format: float
+          description: >
+             Multiplier derived from monthly seasonal curves for the region.
+             
 
-    MetaResponse:
+[Image of linear interpolation graph]
+
+        GRANT_HAIRCUT_APPLIED:
+          type: boolean
+
+    CreditEngineBlock:
+      type: object
+      description: >
+        Credit engine block mapping relational physics into a safe credit limit and
+        operational recommendation.
+      properties:
+        ESTIMATED_SAFE_CREDIT_LIMIT_LOCAL:
+          type: number
+          format: double
+        ESTIMATED_SAFE_CREDIT_LIMIT_USD:
+          type: number
+          format: double
+          nullable: true
+        RECOMMENDED_ACTION:
+          type: string
+          description: >
+            Natural-language recommendation, e.g. "INCREASE to ...", "Reduce to ...",
+            or "Freeze & Recover – CASH CRITICAL (VETO OVERRIDE)".
+        MVR_DECISION:
+          type: string
+          description: >
+            Final decision label from the credit engine ("APPROVE", "HOLD", "DECLINE").
+        SEASONAL_FACTOR:
+          type: number
+          format: float
+        GRANT_HAIRCUT_APPLIED:
+          type: boolean
+        EXPOSURE_TO_REVENUE_RATIO:
+          type: number
+          format: float
+          nullable: true
+        RECOMMENDED_TO_CURRENT_RATIO:
+          type: number
+          format: float
+          nullable: true
+
+    WrapperBlock:
       type: object
       properties:
-        ok:
-          type: boolean
-        api_name:
-          type: string
         version:
           type: string
-        model:
+        core_version:
           type: string
-        endpoints:
-          type: array
-          items:
-            type: string
-        limits:
-          type: object
-          properties:
-            standard:
-              type: integer
-            pro:
-              type: integer
-            enterprise:
-              type: integer
-        last_model_refresh:
+        request_id:
           type: string
-          nullable: true
-        model_fingerprint:
-          type: string
-          nullable: true
-        attribution:
-          $ref: "#/components/schemas/AttributionObject"
-
-    UsageResponse:
-      type: object
-      properties:
-        ok:
-          type: boolean
-        plan:
-          type: string
-        date:
-          type: string
-        used_today:
-          type: integer
-        daily_limit:
-          type: integer
-        attribution:
-          $ref: "#/components/schemas/AttributionObject"
-
-    WhoAmIResponse:
-      type: object
-      properties:
-        ok:
-          type: boolean
-        api:
-          type: string
-        version:
-          type: string
-        capabilities:
-          type: array
-          items:
-            type: string
-        author:
-          type: string
-        region:
-          type: string
-        attribution:
-          $ref: "#/components/schemas/AttributionObject"
-
-    DocsResponse:
-      type: object
-      properties:
-        ok:
-          type: boolean
-        documentation:
-          type: string
-        endpoints:
-          type: array
-          items:
-            type: string
-        version_info:
-          $ref: "#/components/schemas/VersionInfo"
-        attribution:
-          $ref: "#/components/schemas/AttributionObject"
-
-    SessionResponse:
-      type: object
-      properties:
-        ok:
-          type: boolean
-        session_token:
-          type: string
-        expires_in:
-          type: integer
-        expires_at:
+        timestamp:
           type: string
           format: date-time
-        plan:
+
+    ModelMetadata:
+      type: object
+      properties:
+        model_version:
           type: string
-        version_info:
-          $ref: "#/components/schemas/VersionInfo"
-        attribution:
-          $ref: "#/components/schemas/AttributionObject"
+        core_version:
+          type: string
+        wrapper_version:
+          type: string
+        calibration_date:
+          type: string
+        regulatory_status:
+          type: string
+        physics_framework:
+          type: string
+
+    AMOSErrorResponse:
+      type: object
+      description: Error envelope for validation, data-quality veto, auth, or internal errors.
+      properties:
+        error:
+          type: string
+          description: Short error label (e.g., "Invalid input").
+        details:
+          description: Optional object or array with extra error information.
+        request_id:
+          type: string
+          description: UUID useful for support and tracing.
 
     HealthResponse:
       type: object
       properties:
-        ok:
-          type: boolean
-        service:
+        status:
           type: string
-          example: "mvr-api-v2.6-enterprise-optimized"
-        time:
-          type: string
-          format: date-time
-        region:
-          type: string
-        performance:
-          type: string
-        security:
-          type: string
+          example: "OK"
         version:
           type: string
-        uptime_seconds:
-          type: integer
-        features:
-          type: array
-          items:
-            type: string
-        attribution:
-          $ref: "#/components/schemas/AttributionObject"
+          example: "v9.2.6"
+        wrapper:
+          type: string
+          example: "v9.2.6-UTILITY-RESTORE"
+        request_id:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
 
 security:
   - ApiKeyAuth: []
