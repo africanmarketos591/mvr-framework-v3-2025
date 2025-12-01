@@ -268,12 +268,12 @@ paths:
                       RECOMMENDED_TO_CURRENT_RATIO: 2.042
                     WRAPPER:
                       version: "v9.2.6-UTILITY-RESTORE"
-                      core_version: "v9.2.6-GOD-MODE-FINAL"
+                      core_version: "v9.2.6-FINAL"
                       request_id: "example-uuid"
                       timestamp: "2025-11-29T17:19:36.514Z"
                     MODEL_METADATA:
                       model_version: "AMOS-v9.2.6"
-                      core_version: "v9.2.6-GOD-MODE-FINAL"
+                      core_version: "v9.2.6-FINAL"
                       wrapper_version: "v9.2.6-UTILITY-RESTORE"
                       calibration_date: "UNSPECIFIED"
                       regulatory_status: "INTERNAL_USE_ONLY"
@@ -347,7 +347,7 @@ paths:
                   summary: Health response example
                   value:
                     status: "OK"
-                    version: "v9.2.6-GOD-MODE-FINAL"
+                    version: "v9.2.6-FINAL"
                     wrapper: "v9.2.6-UTILITY-RESTORE"
                     request_id: "example-uuid"
                     timestamp: "2025-11-29T17:19:36.514Z"
@@ -491,7 +491,7 @@ components:
              High days_silent values trigger exponential decay in trust scores.
              
 
-[Image of exponential decay graph]
+#[Image of exponential decay graph]
 
         days_since_last_activity:
           type: number
@@ -715,7 +715,7 @@ components:
              Confidence bounds (1-sigma) for the estimated score.
              
 
-[Image of normal distribution confidence interval]
+#[Image of normal distribution confidence interval]
 
           properties:
             lower:
@@ -880,7 +880,7 @@ components:
             the credit engine.
             
 
-[Image of a green traffic light]
+#[Image of a green traffic light]
 
         MVR_GATE_REASONS:
           type: array
@@ -942,7 +942,7 @@ components:
              Multiplier derived from monthly seasonal curves for the region.
              
 
-[Image of linear interpolation graph]
+#[Image of linear interpolation graph]
 
         GRANT_HAIRCUT_APPLIED:
           type: boolean
@@ -1033,7 +1033,7 @@ components:
           example: "OK"
         version:
           type: string
-          example: "v9.2.6-GOD-MODE-FINAL"
+          example: "v9.2.6-FINAL"
         wrapper:
           type: string
           example: "v9.2.6-UTILITY-RESTORE"
