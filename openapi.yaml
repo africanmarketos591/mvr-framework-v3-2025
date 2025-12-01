@@ -488,11 +488,8 @@ components:
             Days since last observed activity. Core input for ghosting risk and
             activity rhythm.
           x-concept-visualization: >
-             High days_silent values trigger exponential decay in trust scores.
-             
-
-#[Image of exponential decay graph]
-
+            High days_silent values trigger exponential decay in trust scores.
+          # Concept: exponential decay graph
         days_since_last_activity:
           type: number
           format: double
@@ -712,11 +709,8 @@ components:
         RRS_CONFIDENCE_INTERVAL:
           type: object
           description: >
-             Confidence bounds (1-sigma) for the estimated score.
-             
-
-#[Image of normal distribution confidence interval]
-
+            Confidence bounds (1-sigma) for the estimated score – approximate
+            confidence interval (RRS_CONFIDENT ± error).
           properties:
             lower:
               type: number
@@ -727,8 +721,6 @@ components:
             error:
               type: number
               format: float
-          description: >
-            Approximate confidence interval (RRS_CONFIDENT ± error).
         Pz_POROSITY:
           type: number
           format: float
@@ -878,10 +870,7 @@ components:
           description: >
             Final operational decision ("APPROVE", "HOLD", "DECLINE") aligned with
             the credit engine.
-            
-
-#[Image of a green traffic light]
-
+          # Concept: green traffic light (APPROVE / HOLD / DECLINE)
         MVR_GATE_REASONS:
           type: array
           items:
@@ -939,11 +928,8 @@ components:
           type: number
           format: float
           description: >
-             Multiplier derived from monthly seasonal curves for the region.
-             
-
-#[Image of linear interpolation graph]
-
+            Multiplier derived from monthly seasonal curves for the region.
+          # Concept: linear interpolation along seasonal curve
         GRANT_HAIRCUT_APPLIED:
           type: boolean
 
@@ -1045,4 +1031,4 @@ components:
 
 security:
   - ApiKeyAuth: []
-  - BuyerEmail: []
+    BuyerEmail: []
