@@ -7,7 +7,7 @@ info:
     The African Market OS-MVR API exposes AMOS, a relational risk and credit physics
     engine designed for high-context African markets.
 
-    AMOS measures *relational readiness* by combining financial signals with the
+    AMOS-MVR API measures *relational readiness* by combining financial signals with the
     Minimum Viable Relationships (MVR) framework: trust, belonging, embeddedness,
     permission, reciprocity, guardian vouchers, and cultural-market fit.
 
@@ -268,12 +268,12 @@ paths:
                       RECOMMENDED_TO_CURRENT_RATIO: 2.042
                     WRAPPER:
                       version: "v9.2.6-UTILITY-RESTORE"
-                      core_version: "v9.2.6-GOD-MODE-FINAL"
+                      core_version: "v9.2.6-FINAL"
                       request_id: "example-uuid"
                       timestamp: "2025-11-29T17:19:36.514Z"
                     MODEL_METADATA:
                       model_version: "AMOS-v9.2.6"
-                      core_version: "v9.2.6-GOD-MODE-FINAL"
+                      core_version: "v9.2.6-FINAL"
                       wrapper_version: "v9.2.6-UTILITY-RESTORE"
                       calibration_date: "UNSPECIFIED"
                       regulatory_status: "INTERNAL_USE_ONLY"
@@ -347,7 +347,7 @@ paths:
                   summary: Health response example
                   value:
                     status: "OK"
-                    version: "v9.2.6-GOD-MODE-FINAL"
+                    version: "v9.2.6-FINAL"
                     wrapper: "v9.2.6-UTILITY-RESTORE"
                     request_id: "example-uuid"
                     timestamp: "2025-11-29T17:19:36.514Z"
@@ -487,6 +487,9 @@ components:
           description: >
             Days since last observed activity. Core input for ghosting risk and
             activity rhythm.
+          x-concept-visualization: >
+            High days_silent values trigger exponential decay in trust scores.
+          # Concept: exponential decay graph
         days_since_last_activity:
           type: number
           format: double
@@ -705,6 +708,9 @@ components:
           description: Overall confidence in the RRS (0–100).
         RRS_CONFIDENCE_INTERVAL:
           type: object
+          description: >
+            Confidence bounds (1-sigma) for the estimated score – approximate
+            confidence interval (RRS_CONFIDENT ± error).
           properties:
             lower:
               type: number
@@ -715,8 +721,6 @@ components:
             error:
               type: number
               format: float
-          description: >
-            Approximate confidence interval (RRS_CONFIDENT ± error).
         Pz_POROSITY:
           type: number
           format: float
@@ -866,6 +870,7 @@ components:
           description: >
             Final operational decision ("APPROVE", "HOLD", "DECLINE") aligned with
             the credit engine.
+          # Concept: green traffic light (APPROVE / HOLD / DECLINE)
         MVR_GATE_REASONS:
           type: array
           items:
@@ -922,6 +927,9 @@ components:
         SEASONAL_FACTOR:
           type: number
           format: float
+          description: >
+            Multiplier derived from monthly seasonal curves for the region.
+          # Concept: linear interpolation along seasonal curve
         GRANT_HAIRCUT_APPLIED:
           type: boolean
 
@@ -1023,4 +1031,4 @@ components:
 
 security:
   - ApiKeyAuth: []
-  - BuyerEmail: []
+    BuyerEmail: []
