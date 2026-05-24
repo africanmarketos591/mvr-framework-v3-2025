@@ -13,6 +13,9 @@ Use these current public API surfaces instead of older V3 API examples:
 - OpenAPI YAML compatibility path: https://africanmarketos.com/api/openapi.yaml
 - API docs: https://africanmarketos.com/api/docs
 - Public sandbox guide: https://africanmarketos.com/docs/sandbox.md
+- Version map: https://africanmarketos.com/docs/version-map.md
+- MVR for AI Agents: https://africanmarketos.com/docs/ai-agents.md
+- One-command adoption: https://africanmarketos.com/docs/one-command-adoption.md
 - Agent instructions: https://africanmarketos.com/AGENTS.md
 - LLM discovery file: https://africanmarketos.com/llms.txt
 - MCP endpoint: https://africanmarketos.com/mcp
@@ -20,6 +23,8 @@ Use these current public API surfaces instead of older V3 API examples:
 - MCP registry metadata: https://github.com/africanmarketos591/mvr-framework/blob/main/server.json
 - Agent patterns: https://github.com/africanmarketos591/mvr-framework/tree/main/agent-patterns
 - Reference clients: https://github.com/africanmarketos591/mvr-framework/tree/main/sdks
+- Current JavaScript SDK: `npm install @africanmarketos/mvr-api-client`
+- Current Python SDK: `pip install mvr-api-client`
 
 For non-commercial evaluation of the current MVR Core API v6.32.0, use:
 
