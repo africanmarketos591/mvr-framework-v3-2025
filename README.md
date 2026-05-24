@@ -16,7 +16,10 @@ Use these current public API surfaces instead of older V3 API examples:
 - Agent instructions: https://africanmarketos.com/AGENTS.md
 - LLM discovery file: https://africanmarketos.com/llms.txt
 - MCP endpoint: https://africanmarketos.com/mcp
+- MCP Registry name: `io.github.africanmarketos591/mvr-api`
 - MCP registry metadata: https://github.com/africanmarketos591/mvr-framework/blob/main/server.json
+- Agent patterns: https://github.com/africanmarketos591/mvr-framework/tree/main/agent-patterns
+- Reference clients: https://github.com/africanmarketos591/mvr-framework/tree/main/sdks
 
 For non-commercial evaluation of the current MVR Core API v6.32.0, use:
 
