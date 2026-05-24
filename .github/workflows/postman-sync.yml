@@ -1,22 +1,42 @@
-name: Sync OpenAPI to Postman
+name: Sync Current MVR API OpenAPI to Postman
 
 on:
+  workflow_dispatch:
   push:
+    branches: ["main"]
     paths:
-      - "**/openapi.yaml"
+      - "openapi.yaml"
+      - "api/openapi.yaml"
+      - "api/openapi.agent.json"
+      - ".github/workflows/postman-sync.yml"
 
 jobs:
   update-postman:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Update OpenAPI schema in Postman
+      - name: Validate current OpenAPI contract
         run: |
-          curl --location --request PUT \
-            "https://api.getpostman.com/apis/2263c10b-54d7-4681-9de4-0aee85471b1c/schemas/645ee680a96496e698754e56f5abab0d3ee5d5c7" \
-            --header "X-Api-Key: ${{ secrets.POSTMAN_API_KEY }}" \
+          python -m json.tool api/openapi.agent.json > /tmp/mvr-openapi-agent.json
+          python -m json.tool api/openapi.yaml > /tmp/mvr-openapi-yaml-json-compatible.json
+
+      - name: Update OpenAPI schema in Postman
+        env:
+          POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+          POSTMAN_API_ID: ${{ vars.POSTMAN_API_ID || '2263c10b-54d7-4681-9de4-0aee85471b1c' }}
+          POSTMAN_SCHEMA_ID: ${{ vars.POSTMAN_SCHEMA_ID || '645ee680a96496e698754e56f5abab0d3ee5d5c7' }}
+        run: |
+          if [ -z "$POSTMAN_API_KEY" ]; then
+            echo "POSTMAN_API_KEY is not configured; skipping owner-side Postman sync."
+            exit 0
+          fi
+
+          curl --fail --location --request PUT \
+            "https://api.getpostman.com/apis/${POSTMAN_API_ID}/schemas/${POSTMAN_SCHEMA_ID}" \
+            --header "X-Api-Key: ${POSTMAN_API_KEY}" \
             --header "Content-Type: application/json" \
-            --data "@openapi.yaml"
+            --data-binary "@api/openapi.agent.json"
