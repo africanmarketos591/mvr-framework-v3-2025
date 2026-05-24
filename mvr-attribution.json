@@ -13,11 +13,13 @@
     "machineReadableLicense": "https://africanmarketos.com/.well-known/mvr-license.json"
   },
   "api": {
-    "demoEndpoint": "https://africanmarketos.com/api/mvr-score-demo.json",
-    "llmEndpoint": "https://africanmarketos.com/api/mvr-score-demo-llm.json",
-    "openapiSpec": "https://africanmarketos.com/api/openapi.yaml",
-    "postmanCollection": "https://africanmarketos.com/api/MVR_Framework_API.postman_collection.json",
-    "rapidApi": "https://rapidapi.com/africanmarketos591/api/mvr-framework-tm-api-african-market-os/"
+    "demoEndpoint": "https://africanmarketos.com/api/mvr-score-demo.v6.32.0.json",
+    "sandboxGuide": "https://africanmarketos.com/docs/sandbox.md",
+    "agentOpenApi": "https://africanmarketos.com/api/openapi.agent.json",
+    "fullOpenApi": "https://africanmarketos.com/api/openapi.json",
+    "openapiYaml": "https://africanmarketos.com/api/openapi.yaml",
+    "mcpEndpoint": "https://africanmarketos.com/mcp",
+    "demoKey": "mvr-demo-key-2026"
   },
   "contact": {
     "email": "info@africanmarketos.com",
